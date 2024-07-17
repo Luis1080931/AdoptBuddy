@@ -4,35 +4,44 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import axiosClient from '../services/axiosClient';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { launchImageLibrary } from 'react-native-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const UserForm = ({ closeModal, title, datos, userData, userId }) => {
+const PetForm = ({ closeModal, title, datos, petData, petId }) => {
 
     /* const route = useRoute();
     const { mode } = route.params; */
     const navigation = useNavigation();
- 
-    const [formData, setFormData] = useState({
-        identificacion: userData ? userData.identificacion.toString() : '',
-        nombre: userData ? userData.nombre : '',
-        correo: userData ? userData.correo : '',
-        telefono: userData ? userData.telefono : '',
-        municipio: userData ? userData.municipio : '',
-        direccion: userData ? userData.direccion : '',
-        password: userData ? userData.password :'',
-        image: userData ? userData.image : null,
-    });
-
-    const [municipios, setMunicipios] = useState([]);
+    const [generos, setGeneros] = useState([])
+    const [categorias, setCategorias] = useState([])
 
     useEffect(() => {
-        axiosClient.get('/users/muni').then((response) => {
+        axiosClient.get('/utils/generos').then((response) => {
             console.log(response.data);
             let atemp = response.data.map((item) => {
-                return {key: item.id_municipio, value: item.nombre_municipio};
+                return {key: item.id, value: item.nombre_genero};
             });
-            setMunicipios(atemp);
+            setGeneros(atemp);
         });
+
+        axiosClient.get('/utils/categorias').then((response) => {
+            console.log(response.data);
+            let atemp = response.data.map((item) => {
+                return {key: item.id, value: item.nombre_categoria};
+            });
+            setCategorias(atemp);
+        })
     }, []);
+ 
+    const [formData, setFormData] = useState({
+        nombre: petData ? petData.nombre : '',
+        fk_genero: petData ? petData.fk_genero : '',
+        fk_categoria: petData ? petData.fk_categoria : '',
+        esteril: petData ? petData.esteril : '',
+        vacunas: petData ? petData.vacunas : '',
+        habitos: petData ? petData.habitos :'',
+        edad: petData ? petData.edad :'',
+        image: petData ? petData.image : null,
+    });
 
     const handleChange = (name, value) => {
         setFormData({
@@ -40,6 +49,19 @@ const UserForm = ({ closeModal, title, datos, userData, userId }) => {
             [name]: value
         });
     };
+
+    useEffect(() => {
+
+        const fetchUser = async () => {
+          const userValue = await AsyncStorage.getItem('user')
+          if(userValue !== null){
+            const response = JSON.parse(userValue)
+            idUser = response.id
+          }
+          console.log('User async', idUser);
+        }
+        fetchUser()
+      }, [])
 
     const handleImagePicker = () => {
         launchImageLibrary({ mediaType: 'photo', quality: 1 }, (response) => {
@@ -57,13 +79,14 @@ const UserForm = ({ closeModal, title, datos, userData, userId }) => {
     const handleSubmit = async () => {
         try {
             const data = new FormData();
-            data.append('identificacion', formData.identificacion);
             data.append('nombre', formData.nombre);
-            data.append('correo', formData.correo);
-            data.append('telefono', formData.telefono);
-            data.append('municipio', formData.municipio);
-            data.append('direccion', formData.direccion);
-            data.append('password', formData.password);
+            data.append('fk_genero', formData.fk_genero);
+            data.append('fk_categoria', formData.fk_categoria); 
+            data.append('esteril', formData.esteril);
+            data.append('vacunas', formData.vacunas);
+            data.append('habitos', formData.habitos);
+            data.append('edad', formData.edad);
+            data.append('fk_dueno', idUser);
 
             if (formData.image) {
                 data.append('image', {
@@ -73,18 +96,18 @@ const UserForm = ({ closeModal, title, datos, userData, userId }) => {
                 });
             }
             
-            await axiosClient.post('/users/registrar', data, {
+            await axiosClient.post('/mascotas/registrar', data, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 }
             }).then((response) => {
                 if(response.status == 201){
-                    Alert.alert('Usuario registrado correctamente');
-                    navigation.navigate('Login');
+                    Alert.alert('Mascota registrada correctamente');
+                    navigation.navigate('Pets');
                     datos()
                     closeModal()
                 }else{
-                    Alert.alert('Error al registrar el usuario');
+                    Alert.alert('Error al registrar la mascota');
                 }
             });
         } catch (error) {
@@ -96,13 +119,14 @@ const UserForm = ({ closeModal, title, datos, userData, userId }) => {
         try {
 
             const data = new FormData();
-            data.append('identificacion', formData.identificacion);
             data.append('nombre', formData.nombre);
-            data.append('correo', formData.correo);
-            data.append('telefono', formData.telefono);
-            data.append('municipio', formData.municipio);
-            data.append('direccion', formData.direccion);
-            data.append('password', formData.password);
+            data.append('fk_genero', formData.fk_genero);
+            data.append('fk_categoria', formData.fk_categoria); 
+            data.append('esteril', formData.esteril);
+            data.append('vacunas', formData.vacunas);
+            data.append('habitos', formData.habitos);
+            data.append('edad', formData.edad);
+            data.append('fk_dueno', idUser);
 
             if (formData.image) {
                 data.append('image', {
@@ -112,18 +136,18 @@ const UserForm = ({ closeModal, title, datos, userData, userId }) => {
                 });
             }
 
-            await axiosClient.put(`/users/actualizar/${userId}`, data, {
+            await axiosClient.put(`/mascotas/actualizar/${petId}`, data, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 }
             }).then((response) => {
                 if(response.status == 201){
-                    Alert.alert('Usuario registrado correctamente');
-                    navigation.navigate('Login');
+                    Alert.alert('Mascota actualizada correctamente');
+                    navigation.navigate('Pets');
                     datos()
                     closeModal()
                 }else{
-                    Alert.alert('Error al registrar el usuario');
+                    Alert.alert('Error al actualizar la mascota');
                 }
             });
         } catch (error) {
@@ -131,46 +155,60 @@ const UserForm = ({ closeModal, title, datos, userData, userId }) => {
         }
     }
 
+    const dataSelect = [
+        {key: 'si', value: 'si'},
+        {key: 'no', value: 'no'}
+    ]
+
     return (
         <ScrollView>
             <View style={styles.container}>
                 <Text style={styles.texts}> Bienvenido, registrate y se uno de los muchos usuarios que cambian la vida de estas mascotas </Text>
                 <View>
-                    <Text style={styles.title}> {title} Usuario </Text>
-                    <View style={styles.containerInput}>
-                        <Text style={styles.texts}>Identificación: </Text>
-                        <TextInput style={styles.inputs} value={formData.identificacion} onChangeText={(value) => handleChange('identificacion', value)} />
-                    </View>
+                    <Text style={styles.title}> {title} mascota </Text>
                     <View style={styles.containerInput}>
                         <Text style={styles.texts}>Nombre: </Text>
-                        <TextInput style={styles.inputs} value={formData.nombre} onChangeText={(value) => handleChange('nombre', value)} />
+                        <TextInput style={styles.inputs} value={formData.nombre} onChangeText={(text) => handleChange('nombre', text)} />
                     </View>
                     <View style={styles.containerInput}>
-                        <Text style={styles.texts}>Correo electrónico: </Text>
-                        <TextInput style={styles.inputs} value={formData.correo} onChangeText={(value) => handleChange('correo', value)} />
-                    </View>
-                    <View style={styles.containerInput}>
-                        <Text style={styles.texts}>Teléfono: </Text>
-                        <TextInput style={styles.inputs} value={formData.telefono} onChangeText={(value) => handleChange('telefono', value)} />
-                    </View>
-                    <View style={styles.containerInput}>
-                        <Text style={styles.texts}>Municipio: </Text>
+                        <Text style={styles.texts}>Genero: </Text>
                         <SelectList 
-                            setSelected={(value) => handleChange('municipio', value)}
-                            data={municipios}
-                            defaultOption={{ key: formData.municipio, value: municipios.find(m => m.key === formData.municipio)?.value }}
+                            setSelected={(value) => handleChange('fk_genero', value)}
+                            data={generos}
+                            defaultOption={{ key: formData.fk_genero, value: generos.find(m => m.key === formData.fk_genero)?.value }}
                         />
                     </View>
                     <View style={styles.containerInput}>
-                        <Text style={styles.texts}>Dirección: </Text>
-                        <TextInput style={styles.inputs} value={formData.direccion} onChangeText={(value) => handleChange('direccion', value)} />
+                        <Text style={styles.texts}>Categoria: </Text>
+                        <SelectList 
+                            setSelected={(value) => handleChange('fk_categoria', value)}
+                            data={categorias}
+                            defaultOption={{ key: formData.fk_categoria, value: categorias.find(m => m.key === formData.fk_categoria)?.value }}
+                        />
                     </View>
                     <View style={styles.containerInput}>
-                        <Text style={styles.texts}>Contraseña: </Text>
-                        <TextInput style={styles.inputs} value={formData.password} onChangeText={(value) => handleChange('password', value)} secureTextEntry={true} />
+                        <Text style={styles.texts}>Esterilidad: </Text>
+                        <SelectList 
+                            setSelected={(value) => handleChange('esteril', value)}
+                            data={dataSelect}
+                            save='key'
+                            defaultOption={{ key: formData.esteril, value: dataSelect.find(m => m.key === formData.esteril)?.value }}
+                        />
                     </View>
                     <View style={styles.containerInput}>
-                        <Text style={styles.texts}>Imagen de perfil: </Text>
+                        <Text style={styles.texts}>Vacunas: </Text>
+                        <TextInput style={styles.inputs} value={formData.vacunas} onChangeText={(text) => handleChange('vacunas', text)} />
+                    </View>
+                    <View style={styles.containerInput}>
+                        <Text style={styles.texts}>Habitos: </Text>
+                        <TextInput style={styles.inputs} value={formData.habitos} onChangeText={(value) => handleChange('habitos', value)} />
+                    </View>
+                    <View style={styles.containerInput}>
+                        <Text style={styles.texts}>Edad: </Text>
+                        <TextInput style={styles.inputs} value={formData.edad} onChangeText={(value) => handleChange('edad', value)} />
+                    </View>
+                    <View style={styles.containerInput}>
+                        <Text style={styles.texts}>Imagen de la mascota: </Text>
                         <TouchableOpacity onPress={handleImagePicker} style={styles.buttonImagePicker}>
                             <Text style={styles.textButton}>Seleccionar Imagen</Text>
                         </TouchableOpacity>
@@ -248,4 +286,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default UserForm;
+export default PetForm;

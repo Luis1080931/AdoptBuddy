@@ -1,11 +1,16 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import Button from '../atoms/Button'
+import ModalUsuario from '../modals/ModalUser'
 
 const MainPage = () => {
 
     const navigation = useNavigation()
+    const [modalOpen, setModalOpen] = useState(false)
+    const [userData, setUserData] = useState(null)
+    const [userId, setUserId] = useState(null)
+    const [title, setTitle] = useState('')
 
     const login = () => {
         navigation.navigate('Login');
@@ -13,6 +18,13 @@ const MainPage = () => {
 
     const register = () => {
         navigation.navigate('Register');
+    }
+
+    const vista = (accion, userData, userId) => {
+      setTitle(accion)
+      setModalOpen(!modalOpen)
+      setUserData(userData)
+      setUserId(userId)
     }
 
   return (
@@ -24,7 +36,15 @@ const MainPage = () => {
       {/* <TouchableOpacity onPress={() => register()} style={styles.button}>
         <Text style={styles.textButton}>Regístrate</Text>
       </TouchableOpacity> */}
-      <Button press={() => navigation.navigate("Register", { mode: "create" })} text={'Registrarse'} />
+      <Button press={() => vista('Registrar')} text={'Registrarse'} />
+
+      <ModalUsuario 
+        visible={modalOpen}
+        onClose={vista}
+        title={title}
+        userData={userData}
+        userId={userId}
+      />
     </View>
   )
 }
