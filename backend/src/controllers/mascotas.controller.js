@@ -18,15 +18,15 @@ export const cargarImage = upload.single('image')
 export const registrarMascota = async (req, res) => {
     try {
         
-        const {nombre, genero, categoria, esteril, vacunas, habitos, edad, dueno} = req.body
+        const {nombre, fk_genero, fk_categoria, esteril, vacunas, habitos, edad, fk_dueno} = req.body
         let image = req.file.originalname
         
         let sql = 'INSERT INTO mascotas (nombre_mascota, imagen, fk_genero, fk_categoria, esteril, vacunas, habitos, edad, fk_dueno, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 2)'
 
-        const [rows] = await pool.query(sql, [nombre, image, genero, categoria, esteril, vacunas, habitos, edad, dueno])
+        const [rows] = await pool.query(sql, [nombre, image, fk_genero, fk_categoria, esteril, vacunas, habitos, edad, fk_dueno])
 
         if(rows.affectedRows>0){
-            res.json({message: 'Mascota registrada exitosamente'})
+            res.status(201).json({message: 'Mascota registrada exitosamente'})
         }else{
             res.status(403).json({message: 'Error al registrar mascota'})
         }
