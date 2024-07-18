@@ -1,11 +1,15 @@
 import { Router } from "express";
-import { registrarAdopcion, actualizarAdopcion,listarAdopciones, eliminarAdopcion } from "../controllers/adopciones.controller.js";
+import { registrarAdopcion, actualizarAdopcion,listarAdopciones, eliminarAdopcion, solicitudesUser, listarAdopcionesUser, listaSolicitudes, aceptarAdopcion } from "../controllers/adopciones.controller.js";
 
 const routeAdopcion = Router();
 
 routeAdopcion.post("/registrar", registrarAdopcion);
 routeAdopcion.put("/actualizar/:id", actualizarAdopcion);
 routeAdopcion.delete("/eliminar/:id", eliminarAdopcion);
-routeAdopcion.get("/listar/:id", listarAdopciones);
+routeAdopcion.get("/listar", listarAdopciones);
+routeAdopcion.get("/listarSoli", listaSolicitudes);
+routeAdopcion.get("/soliUser/:id", solicitudesUser);
+routeAdopcion.get("/adoptsUser/:id", listarAdopcionesUser);
+routeAdopcion.get("/acept/:id", aceptarAdopcion);
 
 export default routeAdopcion

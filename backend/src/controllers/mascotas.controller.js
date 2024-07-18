@@ -116,7 +116,9 @@ export const listarMascotas = async(req, res) => {
             m.nombre_mascota,
             m.imagen, 
             g.nombre_genero AS genero,
+            g.id AS id_genero,
             c.nombre_categoria AS categoria,
+            c.id AS id_categoria,
             m.esteril,
             m.vacunas, 
             m.habitos, 
@@ -211,7 +213,7 @@ export const adoptarMascota = async(req, res) => {
             })
         }else{
             res.status(403).json({
-                status: 200,
+                status: 403,
                 message: 'Error al actualizar el estado'
             })
         }
@@ -221,3 +223,74 @@ export const adoptarMascota = async(req, res) => {
         })
     }
 }
+
+export const solicitarMascota = async(req, res) => {
+    try {
+        const {id} = req.params
+        let sql = 'UPDATE mascotas SET estado = 3 WHERE id_mascota = ?'
+
+        const [result] = await pool.query(sql, [id])
+
+        if(result.affectedRows>0){
+            res.status(200).json({
+                status: 200,
+                message: 'Se actualizo el estado con exito'
+            })
+        }else{
+            res.status(403).json({
+                status: 403,
+                message: 'Error al actualizar el estado'
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error del servidor', error
+        })
+    }
+}
+
+export const mascotasUser = async (req, res) => {
+    try {
+        const {id} = req.params
+        let sql = `
+            SELECT 
+            m.id_mascota,
+            m.nombre_mascota,
+            m.imagen, 
+            g.nombre_genero AS genero,
+            g.id AS id_genero,
+            c.nombre_categoria AS categoria,
+            c.id AS id_categoria,
+            m.esteril,
+            m.vacunas, 
+            m.habitos, 
+            m.edad, 
+            m.estado
+
+            FROM mascotas m
+
+            JOIN 
+                genero g ON m.fk_genero = g.id
+            JOIN 
+                categoria c ON m.fk_categoria = c.id
+
+            WHERE estado = 2 AND fk_dueno = ?
+        `
+
+        const [result] = await pool.query(sql, [id])
+        if(result.length>0){
+            res.status(200).json(result)
+        }else{
+            res.status(404).json({
+                status: 404,
+                message: 'No hay mascotas registradas'
+            })
+        }
+            
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error del servidor' + error
+        })
+    }
+}
+
