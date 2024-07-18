@@ -6,7 +6,7 @@ const IconDelete = () => {
     <View>
       <Image 
         source={require('./../../../assets/iconDelete.png')}
-        style={{ width: 40, height: 40, marginLeft: 10 }}
+        style={{ width: 30, height: 30, marginLeft: 10 }}
       />
     </View>
   )

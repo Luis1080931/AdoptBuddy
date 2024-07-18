@@ -1,15 +1,17 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useRoute } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import axios from 'axios'
 import axiosClient from '../services/axiosClient'
 import { IP } from '../services/Ip'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const PagePetDetaills = () => {
 
     const route = useRoute()
     const { petId } = route.params
     const [mascota, setMascota] = useState(null)
+    const navigation = useNavigation()
 
     const datosMascota = async () => {
         try {
@@ -33,6 +35,57 @@ const PagePetDetaills = () => {
     useEffect(() => {
         datosMascota()
     }, [])
+
+    useEffect(() => {
+
+        const fetchUser = async () => {
+          const userValue = await AsyncStorage.getItem('user')
+          if(userValue !== null){
+            const response = JSON.parse(userValue)
+            idUser = response.id
+          }
+          console.log('User async adopt', idUser);
+        }
+        fetchUser()
+      }, [])
+
+    const handleEstadoMascota = async() => {
+        try {
+            await axiosClient.put(`/mascotas/solicitar/${petId}`).then((response) => {
+                if(response.status === 200){
+                    console.log('Solicitud enviada correctamente');
+                    datosMascota()
+                }else{
+                    Alert.alert('Vaya ocurrió un error al enviar la solicitud')
+                }
+            })
+        } catch (error) {
+            console.log('ERROR DEL SERVIDOR PARA SOLICITAR MASCOTA' + error);
+        }
+    }
+
+    const handleAdoptar = async () => {
+        try {
+            const data = {
+                persona: idUser,
+                mascota: petId
+            }
+
+            await axiosClient.post(`/adopciones/registrar`, data).then((response) => {
+                if(response.status === 200){
+                    console.log('Mascota adoptada con exito');
+                    Alert.alert('Tu solicitud de adopción entró en proceso')
+                    handleEstadoMascota()
+                    datosMascota()
+                    navigation.navigate('MisSoli')
+                }else{
+                    Alert.alert('Vaya ocurrió un error en el proceso')
+                }
+            })
+        } catch (error) {
+            console.log('Error al adoptar la mascota' + error);
+        }
+    }
 
   return (
     <ScrollView>
@@ -61,9 +114,11 @@ const PagePetDetaills = () => {
                     <Text style={styles.textInfo}> Estado actual: {mascota.estado}</Text>
                 </View>
                 <View>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={styles.textButon}> Adoptar </Text>
-                    </TouchableOpacity>
+                    {mascota.estado === 'sin adoptar' ? (
+                        <TouchableOpacity style={styles.button} onPress={() => handleAdoptar(petId)}>
+                            <Text style={styles.textButon}> Adoptar </Text>
+                        </TouchableOpacity>
+                    ): ''}
                 </View>
             </View>
         ) : (

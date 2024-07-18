@@ -22,12 +22,21 @@ const SideBar = ({ visible, onClose }) => {
         useNativeDriver: true,
       }).start();
     }
-    const getUser = async () => {
-      const jsonValue = await AsyncStorage.getItem('user');
-      const userData = JSON.parse(jsonValue);
-    }
-    getUser();
   }, [visible]);
+
+  useEffect(() => {
+
+    const fetchUser = async () => {
+      const userValue = await AsyncStorage.getItem('user')
+      if(userValue !== null){
+        const response = JSON.parse(userValue)
+        rolUser = response.rol
+        idUser = response.id
+      }
+      /* console.log('User async', rolUser); */
+    }
+    fetchUser()
+  }, [])
 
   const handlePress = (screenName) => {
     navigation.navigate(screenName);
@@ -94,6 +103,36 @@ const SideBar = ({ visible, onClose }) => {
                   {/* <Image source={iconNoti} style={styles.buttonIcon} /> */}
                   <Text style={textStyle('PetsAdopt')}>Mascotas</Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                  style={buttonStyle('PetsAdopt')}
+                  onPress={() => handlePress('MisPets')}
+                >
+                  {/* <Image source={iconNoti} style={styles.buttonIcon} /> */}
+                  <Text style={textStyle('PetsAdopt')}>Mis mascotas</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={buttonStyle('PetsAdopt')}
+                  onPress={() => handlePress('MisAdopts')}
+                >
+                  {/* <Image source={iconNoti} style={styles.buttonIcon} /> */}
+                  <Text style={textStyle('PetsAdopt')}>Mis adopciones</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={buttonStyle('PetsAdopt')}
+                  onPress={() => handlePress('MisSoli')}
+                >
+                  {/* <Image source={iconNoti} style={styles.buttonIcon} /> */}
+                  <Text style={textStyle('PetsAdopt')}>Mis solicitudes</Text>
+                </TouchableOpacity>
+                {rolUser && rolUser === 'admin' ? (
+                  <TouchableOpacity
+                    style={buttonStyle('PetsAdopt')}
+                    onPress={() => handlePress('Solicitudes')}
+                  >
+                    {/* <Image source={iconNoti} style={styles.buttonIcon} /> */}
+                    <Text style={textStyle('PetsAdopt')}>Solicitudes</Text>
+                  </TouchableOpacity>
+                ) : ''}
                {/* )} */}
               <TouchableOpacity style={styles.button} onPress={handleLogout}>{/* 
                 <Ionicons name="log-out-outline" size={24} color="black" style={styles.buttonIcon} /> */}

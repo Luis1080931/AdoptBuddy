@@ -11,7 +11,7 @@ import IconEdit from '../atoms/IconEdit'
 import IconPlus from '../atoms/IconPlus'
 import ModalPet from '../modals/ModalPets'
 
-const ListPets = () => {
+const MisSolicitudes = () => {
 
   const [mascotas, setMascotas] = useState([])
   const navigation = useNavigation()
@@ -20,18 +20,6 @@ const ListPets = () => {
   const [petId, setPetId] = useState(null)
   const [title, setTitle] = useState('')
 
-  
-  const getMascotas = async () => {
-    try {
-      const response = await axios.get(`${IP}/mascotas/listar`)
-      console.log('Mascotas listadas', response.data)
-      setMascotas(response.data)
-      
-    } catch (error) {
-      console.log('Error del servidor para listar mascotas' + error);
-    }
-  }
-
   useEffect(() => {
 
     const fetchUser = async () => {
@@ -39,28 +27,41 @@ const ListPets = () => {
       if(userValue !== null){
         const response = JSON.parse(userValue)
         rolUser = response.rol
+        idUser = response.id
       }
       console.log('User async', rolUser);
     }
     fetchUser()
   }, [])
   
+  const getMascotasAdopUser = async () => {
+    try {
+      const response = await axiosClient.get(`/adopciones/soliUser/${idUser}`)
+      console.log('Mascotas listadas', response.data)
+      setMascotas(response.data)
+      
+    } catch (error) {
+      console.log('Error del servidor para listar solictudes' + error);
+    }
+  }
+
+  
   useEffect(() => {
-    getMascotas()
+    getMascotasAdopUser()
   }, [])
 
-  const vista = (accion, petData, petId) => {
+  /* const vista = (accion, petData, petId) => {
     setTitle(accion)
     setModalOpen(!modalOpen)
     setPetData(petData)
     setPetId(petId)
-  }
+  } */
 
   const handleVer = async (id) => {
     navigation.navigate('Pet', { petId: id })
   }
 
-  const deletePet = async (id) => {
+  /* const deletePet = async (id) => {
     try {
       await axiosClient.delete(`/mascotas/eliminar/${id}`).then((response) => {
         if(response.status === 200){
@@ -74,56 +75,58 @@ const ListPets = () => {
     } catch (error) {
       console.log('Error al eliminar mascota' + error);
     }
-  }
+  } */
 
   return (
     <>
-      <ScrollView>
-        <View>
-          <Text style={styles.title}> Mascotas disponibles </Text>
-          <FlatList 
-            data={mascotas}
-            keyExtractor={item => item.id_mascota}
-            renderItem={({ item }) => (
-              <View style={styles.card}>
-                <View style={{ flexDirection: 'row', alignItems: 'center'  }}>
-                  <Image 
-                    source={{ uri: `${IP}/img/${item.imagen}` }}
-                    style={styles.mascotaImage}
-                  />
-                  <Text style={styles.texto}> {item.nombre_mascota} </Text>
-                </View>
-                <View style={styles.mascotaDescription}>
-                  <TouchableOpacity onPress={() => handleVer(item.id_mascota)}>
-                    <IconVer />
-                  </TouchableOpacity>
-                  {rolUser && rolUser === 'usuario' ? (
-                    <TouchableOpacity onPress={() => vista('Actualizar', item, item.id_mascota)}>
-                      <IconEdit />
+        <ScrollView>
+          <View>
+          {mascotas ? (
+            <>
+            <Text style={styles.title}> Mis solicitudes </Text>
+            <FlatList 
+              data={mascotas}
+              keyExtractor={item => item.id_mascota}
+              renderItem={({ item }) => (
+                <View style={styles.card}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center'  }}>
+                    <Image 
+                      source={{ uri: `${IP}/img/${item.imagen}` }}
+                      style={styles.mascotaImage}
+                    />
+                    <Text style={styles.texto}> {item.nombre_mascota} </Text>
+                  </View>
+                  <View style={styles.mascotaDescription}>
+                    <TouchableOpacity onPress={() => handleVer(item.id_mascota)}>
+                      <IconVer />
                     </TouchableOpacity>
-                  ): ''}
-                  <TouchableOpacity onPress={() => deletePet(item.id_mascota)}>
-                    <IconDelete />
-                  </TouchableOpacity>
+                    {/* {rolUser && rolUser === 'usuario' ? (
+                      <TouchableOpacity onPress={() => vista('Actualizar', item, item.id_mascota)}>
+                        <IconEdit />
+                      </TouchableOpacity>
+                    ): ''} */}
+                    {/* <TouchableOpacity onPress={() => deletePet(item.id_mascota)}>
+                      <IconDelete />
+                    </TouchableOpacity> */}
+                  </View>
                 </View>
-              </View>
-            )}
-          />
-        </View>
-      </ScrollView>
-      <View style={styles.addButton}>
-          <TouchableOpacity onPress={() => vista('Registrar')}>
-            <IconPlus style={styles.iconMas} />
-          </TouchableOpacity>
-        </View>
-        <ModalPet 
+              )}
+            />
+            </>
+          ): (
+            <Text> Aun no tienes adopciones </Text>
+          )}
+          </View>
+        </ScrollView>
+
+        {/* <ModalPet 
           visible={modalOpen}
           onClose={vista}
           title={title}
           data={mascotas}
           petData={petData}
           petId={petId}
-        />
+        /> */}
     </>
   )
 }
@@ -203,4 +206,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default ListPets
+export default MisSolicitudes

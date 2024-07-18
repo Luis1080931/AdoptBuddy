@@ -9,6 +9,10 @@ import UserForm from '../pages/UserForm'
 import ProfileUser from '../pages/ProfileUser'
 import ListPets from '../pages/ListPets'
 import PagePetDetaills from '../pages/PagePetDetaills'
+import MisMascotas from '../pages/MisMascotas'
+import MisAdopciones from '../pages/MisAdopciones'
+import MisSolicitudes from '../pages/MisSolicitudes'
+import Solicitudes from '../pages/Solicitudes'
 
 const Stack = createNativeStackNavigator()
 
@@ -33,6 +37,10 @@ const Routes = () => {
         <Stack.Screen name='Profile' component={ProfileUser} />
         <Stack.Screen name='Pets' component={ListPets} />
         <Stack.Screen name='Pet' component={PagePetDetaills} />
+        <Stack.Screen name='MisPets' component={MisMascotas} />
+        <Stack.Screen name='MisAdopts' component={MisAdopciones} />
+        <Stack.Screen name='MisSoli' component={MisSolicitudes} />
+        <Stack.Screen name='Solicitudes' component={Solicitudes} />
     </Stack.Navigator>
   )
 }

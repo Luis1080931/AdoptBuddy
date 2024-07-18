@@ -11,7 +11,7 @@ import IconEdit from '../atoms/IconEdit'
 import IconPlus from '../atoms/IconPlus'
 import ModalPet from '../modals/ModalPets'
 
-const ListPets = () => {
+const MisMascotas = () => {
 
   const [mascotas, setMascotas] = useState([])
   const navigation = useNavigation()
@@ -20,10 +20,23 @@ const ListPets = () => {
   const [petId, setPetId] = useState(null)
   const [title, setTitle] = useState('')
 
+  useEffect(() => {
+
+    const fetchUser = async () => {
+      const userValue = await AsyncStorage.getItem('user')
+      if(userValue !== null){
+        const response = JSON.parse(userValue)
+        rolUser = response.rol
+        idUser = response.id
+      }
+      console.log('User async', rolUser);
+    }
+    fetchUser()
+  }, [])
   
-  const getMascotas = async () => {
+  const getMascotasUser = async () => {
     try {
-      const response = await axios.get(`${IP}/mascotas/listar`)
+      const response = await axiosClient.get(`/mascotas/petUser/${idUser}`)
       console.log('Mascotas listadas', response.data)
       setMascotas(response.data)
       
@@ -32,21 +45,9 @@ const ListPets = () => {
     }
   }
 
-  useEffect(() => {
-
-    const fetchUser = async () => {
-      const userValue = await AsyncStorage.getItem('user')
-      if(userValue !== null){
-        const response = JSON.parse(userValue)
-        rolUser = response.rol
-      }
-      console.log('User async', rolUser);
-    }
-    fetchUser()
-  }, [])
   
   useEffect(() => {
-    getMascotas()
+    getMascotasUser()
   }, [])
 
   const vista = (accion, petData, petId) => {
@@ -65,7 +66,7 @@ const ListPets = () => {
       await axiosClient.delete(`/mascotas/eliminar/${id}`).then((response) => {
         if(response.status === 200){
           console.log('Mascota eliminada')
-          getMascotas()
+          getMascotasUser()
           Alert.alert('Mascota eliminada con éxito')
         }else{
           Alert.alert('Error al eliminar la mascota')
@@ -80,7 +81,7 @@ const ListPets = () => {
     <>
       <ScrollView>
         <View>
-          <Text style={styles.title}> Mascotas disponibles </Text>
+          <Text style={styles.title}> Mis mascotas </Text>
           <FlatList 
             data={mascotas}
             keyExtractor={item => item.id_mascota}
@@ -111,11 +112,6 @@ const ListPets = () => {
           />
         </View>
       </ScrollView>
-      <View style={styles.addButton}>
-          <TouchableOpacity onPress={() => vista('Registrar')}>
-            <IconPlus style={styles.iconMas} />
-          </TouchableOpacity>
-        </View>
         <ModalPet 
           visible={modalOpen}
           onClose={vista}
@@ -203,4 +199,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default ListPets
+export default MisMascotas

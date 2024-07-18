@@ -1,7 +1,8 @@
-import { View, Text, Modal, TouchableOpacity, Image } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, Image, ScrollView } from 'react-native';
 import React from 'react';
 import UserForm from '../pages/UserForm';
 import PetForm from '../organims/PetForm';
+import LinearGradient from 'react-native-linear-gradient';
 
 const ModalPet = ({visible, onClose, title, data, petData, petId}) => {
     const colors = {
@@ -23,16 +24,16 @@ const ModalPet = ({visible, onClose, title, data, petData, petId}) => {
                 backgroundColor:'white',
                 justifyContent:'center',
                 alignItems:'center',
-                marginTop: 50
+                marginTop: 50,
             }}>
-                {/* <LinearGradient
+                <LinearGradient
                     colors={colors.tealGradient}
                     style={{
                         height:680,
-                        width:350,
+                        width: '98%',
                         borderRadius:5
                     }}
-                > */}
+                >
                     <View
                         style={{
                             height:45,
@@ -55,12 +56,16 @@ const ModalPet = ({visible, onClose, title, data, petData, petId}) => {
                             />
                         </TouchableOpacity>
                     </View>
-                    <View style={{
-                        margin:12
-                    }} >
-                        <PetForm closeModal={onClose} title={title} data={data} petData={petData} petId={petId}/>
-                    </View>
-                {/* </LinearGradient> */}
+                    <ScrollView>
+                        <View
+                        style={{
+                            margin: 12,
+                        }}
+                        >
+                            <PetForm closeModal={onClose} title={title} data={data} petData={petData} petId={petId}/>
+                        </View>
+                    </ScrollView>
+                </LinearGradient>
             </View>
         </Modal>
     );

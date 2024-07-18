@@ -33,13 +33,13 @@ const PetForm = ({ closeModal, title, datos, petData, petId }) => {
     }, []);
  
     const [formData, setFormData] = useState({
-        nombre: petData ? petData.nombre : '',
-        fk_genero: petData ? petData.fk_genero : '',
-        fk_categoria: petData ? petData.fk_categoria : '',
+        nombre: petData ? petData.nombre_mascota : '',
+        fk_genero: petData ? petData.genero : '',
+        fk_categoria: petData ? petData.categoria : '',
         esteril: petData ? petData.esteril : '',
         vacunas: petData ? petData.vacunas : '',
-        habitos: petData ? petData.habitos :'',
-        edad: petData ? petData.edad :'',
+        habitos: petData ? petData.habitos : '',
+        ezdad: petData ? petData.edad : '',
         image: petData ? petData.image : null,
     });
 
@@ -161,10 +161,9 @@ const PetForm = ({ closeModal, title, datos, petData, petId }) => {
     ]
 
     return (
-        <ScrollView>
+        /* <ScrollView style={{ width: 300 }}> */
             <View style={styles.container}>
-                <Text style={styles.texts}> Bienvenido, registrate y se uno de los muchos usuarios que cambian la vida de estas mascotas </Text>
-                <View>
+                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <Text style={styles.title}> {title} mascota </Text>
                     <View style={styles.containerInput}>
                         <Text style={styles.texts}>Nombre: </Text>
@@ -221,14 +220,16 @@ const PetForm = ({ closeModal, title, datos, petData, petId }) => {
                     </View>
                 </View>
             </View>
-        </ScrollView>
+        /* </ScrollView> */
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        width: '100%',
+        textAlign: 'center'
     },
     containerInput: {
         width: 300,
