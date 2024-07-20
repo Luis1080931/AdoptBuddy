@@ -10,6 +10,6 @@ routeAdopcion.get("/listar", listarAdopciones);
 routeAdopcion.get("/listarSoli", listaSolicitudes);
 routeAdopcion.get("/soliUser/:id", solicitudesUser);
 routeAdopcion.get("/adoptsUser/:id", listarAdopcionesUser);
-routeAdopcion.get("/acept/:id", aceptarAdopcion);
+routeAdopcion.put("/acept/:id", aceptarAdopcion);
 
 export default routeAdopcion

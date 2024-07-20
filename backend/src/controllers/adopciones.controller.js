@@ -142,19 +142,18 @@ export const listarAdopcionesUser = async(req, res) => {
         const {id} = req.params
         let sql = `
                 SELECT 
-                a.fecha,
-                u.* AS persona, 
-                m.* AS mascota
+                u.*, 
+                m.*,
                 a.estado
                 
                 FROM adoptar a
 
                 JOIN 
-                    usuarios u ON a.persona = u.identificacion
+                    usuarios u ON a.persona = u.id
                 JOIN 
                     mascotas m ON a.mascota = m.id_mascota 
 
-                WHERE estado = 2 AND persona = ?
+                WHERE a.estado = 2 AND persona = ?
         `
 
         const [result] = await pool.query(sql, [id])
@@ -179,7 +178,7 @@ export const listaSolicitudes = async (req, res) => {
                 SELECT 
                 u.*, 
                 m.*,
-                a.estado
+                a.*
                 
                 FROM adoptar a
 

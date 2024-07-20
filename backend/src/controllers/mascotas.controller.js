@@ -123,7 +123,8 @@ export const listarMascotas = async(req, res) => {
             m.vacunas, 
             m.habitos, 
             m.edad, 
-            m.estado
+            m.estado,
+            m.fk_dueno
 
             FROM mascotas m
 
@@ -203,6 +204,31 @@ export const adoptarMascota = async(req, res) => {
     try {
         const {id} = req.params
         let sql = 'UPDATE mascotas SET estado = 1 WHERE id_mascota = ?'
+
+        const [result] = await pool.query(sql, [id])
+
+        if(result.affectedRows>0){
+            res.status(200).json({
+                status: 200,
+                message: 'Se actualizo el estado con exito'
+            })
+        }else{
+            res.status(403).json({
+                status: 403,
+                message: 'Error al actualizar el estado'
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error del servidor', error
+        })
+    }
+}
+
+export const disponibleMascota = async(req, res) => {
+    try {
+        const {id} = req.params
+        let sql = 'UPDATE mascotas SET estado = 2 WHERE id_mascota = ?'
 
         const [result] = await pool.query(sql, [id])
 
