@@ -124,7 +124,7 @@ const SideBar = ({ visible, onClose }) => {
                   {/* <Image source={iconNoti} style={styles.buttonIcon} /> */}
                   <Text style={textStyle('PetsAdopt')}>Mis solicitudes</Text>
                 </TouchableOpacity>
-                {rolUser && rolUser === 'admin' ? (
+                {/* {rolUser && rolUser === 'admin' ? ( */}
                   <TouchableOpacity
                     style={buttonStyle('PetsAdopt')}
                     onPress={() => handlePress('Solicitudes')}
@@ -132,7 +132,7 @@ const SideBar = ({ visible, onClose }) => {
                     {/* <Image source={iconNoti} style={styles.buttonIcon} /> */}
                     <Text style={textStyle('PetsAdopt')}>Solicitudes</Text>
                   </TouchableOpacity>
-                ) : ''}
+               {/*  ) : ''} */}
                {/* )} */}
               <TouchableOpacity style={styles.button} onPress={handleLogout}>{/* 
                 <Ionicons name="log-out-outline" size={24} color="black" style={styles.buttonIcon} /> */}

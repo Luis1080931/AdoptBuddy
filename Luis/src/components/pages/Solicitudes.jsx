@@ -65,29 +65,31 @@ const Solicitudes = () => {
     navigation.navigate('Profile', { userId: id })
   }
 
-  const deleteSolicitud = async (id) => {
+  const deleteSolicitud = async (id, idPet) => {
     try {
       await axiosClient.delete(`/adopciones/eliminar/${id}`).then((response) => {
         if(response.status === 200){
           console.log('Solicitud cancelada')
-          getMascotas()
           Alert.alert('Solictud cancelada con éxito')
+          handleCancelPet(idPet)
+          getSolicitudes()
         }else{
           Alert.alert('Error al eliminar la solicitud')
         }
       })
     } catch (error) {
-      console.log('Error al eliminar mascota' + error);
+      console.log('Error del servidor al eliminar solicitud' + error);
     }
   }
 
-  const hanleAccept = async (id) => {
+  const hanleAccept = async (id, idPet) => {
     try {
         await axiosClient.put(`/adopciones/acept/${id}`).then((response) => {
             if(response.status === 200){
               console.log('Solicitud aceptada')
-              getSolicitudes()
               Alert.alert('Solicitud aceptada con éxito')
+              handleAdoptMascota(idPet)
+              getSolicitudes()
             }else{
               Alert.alert('Error al aceptar la solicitud')
             }
@@ -97,6 +99,33 @@ const Solicitudes = () => {
     }
   }
 
+  const handleAdoptMascota = async (idPet) => {
+    try {
+      await axiosClient.put(`/mascotas/adoptar/${idPet}`).then((response) => {
+        if(response.status == 200){
+          console.log('Mascota adoptada');
+        }else{
+          console.log('Error al adoptar mascota');
+        }
+      })
+    } catch (error) {
+      console.log('Error del servidor para cambiar estado de mascota' + error);
+    }
+  }
+
+  const handleCancelPet = async(idPet) => {
+    try {
+      await axiosClient.put(`/mascotas/cancel/${idPet}`).then((response) => {
+        if(response.status == 200){
+          console.log('Mascota disponible');
+        }else{
+          console.log('Error al poner en disponibilidad la mascota');
+        }
+      })
+    } catch (error) {
+      console.log('Error del servidor para poner en disponibilidad mascoga' + error);
+    }
+  }
   return (
     <>
         <ScrollView>
@@ -134,24 +163,11 @@ const Solicitudes = () => {
                         </TouchableOpacity>
                       </View>
                     </View>
-                    {/* <View style={styles.mascotaDescription}>
-                      <TouchableOpacity onPress={() => handleVer(item.id_mascota)}>
-                      <IconVer />
-                      </TouchableOpacity>
-                      {rolUser && rolUser === 'usuario' ? (
-                        <TouchableOpacity onPress={() => vista('Actualizar', item, item.id_mascota)}>
-                        <IconEdit />
-                        </TouchableOpacity>
-                        ): ''}
-                        <TouchableOpacity onPress={() => deletePet(item.id_mascota)}>
-                        <IconDelete />
-                        </TouchableOpacity>
-                        </View> */}
                   <View style={styles.buttonAcciones}>
-                    <TouchableOpacity style={styles.buttonAcept}>
+                    <TouchableOpacity onPress={() => hanleAccept(item.id, item.mascota)} style={styles.buttonAcept}>
                       <Text style={styles.textoButton}> Aceptar </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttonCancel}>
+                    <TouchableOpacity onPress={() => deleteSolicitud(item.id, item.mascota)} style={styles.buttonCancel}>
                       <Text style={styles.textoButton}>Cancelar</Text>
                     </TouchableOpacity>
                   </View>

@@ -56,7 +56,7 @@ const PagePetDetaills = () => {
                     console.log('Solicitud enviada correctamente');
                     datosMascota()
                 }else{
-                    Alert.alert('Vaya ocurrió un error al enviar la solicitud')
+                    Alert.alert('Vaya ocurrió un error al enviar la solicitud para cambiar estado de mascota')
                 }
             })
         } catch (error) {

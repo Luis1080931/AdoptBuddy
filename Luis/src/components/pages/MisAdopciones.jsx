@@ -30,6 +30,7 @@ const MisAdopciones = () => {
         idUser = response.id
       }
       console.log('User async', rolUser);
+      console.log('User async id', idUser);
     }
     fetchUser()
   }, [])
@@ -41,7 +42,7 @@ const MisAdopciones = () => {
       setMascotas(response.data)
       
     } catch (error) {
-      console.log('Error del servidor para listar mascotas' + error);
+      console.log('Error del servidor para listar ADOPCIONES' + error);
     }
   }
 

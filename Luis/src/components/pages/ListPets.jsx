@@ -39,8 +39,11 @@ const ListPets = () => {
       if(userValue !== null){
         const response = JSON.parse(userValue)
         rolUser = response.rol
+        idUser = response.id
       }
       console.log('User async', rolUser);
+      console.log('User async id', idUser);
+
     }
     fetchUser()
   }, [])
@@ -97,14 +100,16 @@ const ListPets = () => {
                   <TouchableOpacity onPress={() => handleVer(item.id_mascota)}>
                     <IconVer />
                   </TouchableOpacity>
-                  {rolUser && rolUser === 'usuario' ? (
-                    <TouchableOpacity onPress={() => vista('Actualizar', item, item.id_mascota)}>
-                      <IconEdit />
-                    </TouchableOpacity>
+                  {idUser && idUser === item.fk_dueno ? (
+                    <>
+                      <TouchableOpacity onPress={() => vista('Actualizar', item, item.id_mascota)}>
+                        <IconEdit />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => deletePet(item.id_mascota)}>
+                        <IconDelete />
+                      </TouchableOpacity>
+                    </>
                   ): ''}
-                  <TouchableOpacity onPress={() => deletePet(item.id_mascota)}>
-                    <IconDelete />
-                  </TouchableOpacity>
                 </View>
               </View>
             )}
