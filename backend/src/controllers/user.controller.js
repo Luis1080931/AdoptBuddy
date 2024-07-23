@@ -123,6 +123,8 @@ export const buscarUsusario = async (req, res) => {
                 nombre_municipio,
                 direccion 
 
+                FROM usuarios
+
                 JOIN municipios ON municipio = id_municipio
 
                 WHERE id = ?
