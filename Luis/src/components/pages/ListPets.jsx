@@ -82,7 +82,7 @@ const ListPets = () => {
   return (
     <>
       <ScrollView>
-        <View>
+        <View >
           <Text style={styles.title}> Mascotas disponibles </Text>
           <FlatList 
             data={mascotas}
@@ -161,7 +161,8 @@ const styles = StyleSheet.create({
   },
   texto: {
     fontSize: 25,
-    fontWeight: '700'
+    fontWeight: '700',
+    color: 'black'
   },
   mascotaName: {
     fontSize: 18,
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    backgroundColor: '#336699',
+    backgroundColor: 'rgb(255, 165, 0)',
     borderRadius: 50,
     height: 50,
     width: 50,

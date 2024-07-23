@@ -8,7 +8,7 @@ const ModalPet = ({visible, onClose, title, data, petData, petId}) => {
     const colors = {
         white: 'rgb(255, 255, 255)',
         teal: 'rgb(0, 128, 128)',
-        tealGradient: ['rgb(255, 255, 255)', 'rgb(20,40,60)']
+        tealGradient: ['rgb(255, 220, 200)', 'rgb(255,165,0)']
     };
 
     return (
@@ -47,10 +47,10 @@ const ModalPet = ({visible, onClose, title, data, petData, petId}) => {
                             <Image
                                 style={{
                                     margin:15,
-                                    width:50,
-                                    height:50,
-                                    resizeMode:'contain',
-                                    marginTop: 50
+                                    width:40,
+                                    height:40,
+                                    marginTop: 50,
+                                    borderRadius: 100
                                 }}
                                 source={require('./../../../assets/iconClose.png')}
                             />

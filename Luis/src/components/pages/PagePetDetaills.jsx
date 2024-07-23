@@ -115,7 +115,7 @@ const PagePetDetaills = () => {
                 </View>
                 <View>
                     {mascota.estado === 'sin adoptar' ? (
-                        <TouchableOpacity style={styles.button} onPress={() => handleAdoptar(petId)}>
+                        <TouchableOpacity style={styles.button} onPress={handleAdoptar}>
                             <Text style={styles.textButon}> Adoptar </Text>
                         </TouchableOpacity>
                     ): ''}

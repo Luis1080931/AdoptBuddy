@@ -6,7 +6,7 @@ const IconVer = () => {
     <View>
       <Image 
         source={require('./../../../assets/ver.png')}
-        style={{ width: 30, height: 30 }}
+        style={{ width: 30, height: 30  }}
       />
     </View>
   )

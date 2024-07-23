@@ -102,15 +102,15 @@ const Login = () => {
 
   return (
     <>
-    <ImageBackground
+    {/* <ImageBackground
         style={styles.background}
-      >
+      > */}
       <View style={styles.container}>
-        
-          <Image
-            /* source={require('../../assets/logoProyectoNegro.png')} // Ruta de la imagen */
-            style={styles.imagen} // Estilo de la imagen
-          />
+        <Text style={styles.titulo}> ¡Haz parte de esta bonita familia ! </Text>
+        <Image 
+          style={{ width: 300, height: 300 }}
+          source={require('./../../../assets/logoIA.png')}
+        />
         
         <View>
           <Text style={styles.titulo}>INICIAR SESION </Text>
@@ -136,12 +136,12 @@ const Login = () => {
           </TouchableOpacity>
         </View>
         <View>
-          <TouchableOpacity>
+          {/* <TouchableOpacity>
             <Text style={styles.textoBoton}>¿Olvidaste tu contraseña?</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
-      </ImageBackground>
+      {/* </ImageBackground> */}
     </>
   )
 }
@@ -167,14 +167,14 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     width:300,
-    backgroundColor: '#58AAD8',
+    backgroundColor: 'rgb(255, 215, 100)',
     borderRadius: 10,
     marginBottom: 10,
     paddingHorizontal: 10,
     color: '#000',
   },
   boton: {
-    backgroundColor: '#337FA9',
+    backgroundColor: 'rgb(255, 165, 0)',
     justifyContent: 'center',
     borderRadius: 10,
     marginBottom: 15,
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: 40,
-    backgroundColor: '#58AAD8',
+    backgroundColor: 'rgb(255, 215, 100)',
     borderRadius: 10,
     marginBottom: 10,
     paddingHorizontal: 10,
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: '#000',
-
+    
   },
   
   eyeIcon: {

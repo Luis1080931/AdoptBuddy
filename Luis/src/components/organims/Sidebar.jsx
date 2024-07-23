@@ -48,7 +48,7 @@ const SideBar = ({ visible, onClose }) => {
     try {
       await AsyncStorage.removeItem('token');
       Alert.alert("Cierre de Sesión", "Has cerrado sesión exitosamente.");
-      navigation.navigate('Login');
+      navigation.navigate('AdoptBuddy');
       onClose();
     } catch (error) {
       console.error("Error al cerrar sesión:", error);

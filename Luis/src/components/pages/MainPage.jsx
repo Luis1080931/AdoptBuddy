@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import Button from '../atoms/Button'
@@ -29,13 +29,15 @@ const MainPage = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Bienvenidos a la AdoptBuddy</Text>
+      <Text style={styles.title}>Bienvenidos a AdoptBuddy</Text>
+      <Image 
+        style={{ width: 300, height: 300, marginBottom: 20, borderRadius: 100 }}
+        source={require('./../../../assets/logoIA.png')}
+      />
       <Text style={styles.textInfo}> ¿Ya tienes cuenta? </Text>
       <Button press={() => navigation.navigate("Login")} text={'Iniciar sesión'} />
       <Text style={styles.textInfo}> ¿Aún no tienes cuenta? </Text>
-      {/* <TouchableOpacity onPress={() => register()} style={styles.button}>
-        <Text style={styles.textButton}>Regístrate</Text>
-      </TouchableOpacity> */}
+      
       <Button press={() => vista('Registrar')} text={'Registrarse'} />
 
       <ModalUsuario 
@@ -59,10 +61,12 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
         marginBottom: 20,
+        color: 'black'
     },
     textInfo: {
         fontSize: 20,
-        marginTop: 10
+        marginTop: 10,
+        color: 'black'
     },
     button: {
         backgroundColor: '#4CAF50',

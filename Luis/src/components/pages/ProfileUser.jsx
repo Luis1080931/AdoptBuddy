@@ -1,23 +1,38 @@
-import { View, Text, Image, StyleSheet } from 'react-native'
+import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { IP } from '../services/Ip.jsx'
+import ModalUsuario from '../modals/ModalUser.jsx'
+import axiosClient from '../services/axiosClient.jsx'
 
 const ProfileUser = () => {
 
-    const [datosUser, setDatosUser ] = useState({})
+    const [formData, setFormData] = useState({
+        identificacion: '',
+        nombre: '',
+        email: '',
+        telefono: '',
+        municipio: '',
+        direccion: '',
+        password: ''
+    })
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const userValue = await AsyncStorage.getItem('user')
-            
-                if(userValue !== null){
-                    const response = JSON.parse(userValue)
-                    IdUser = response.id
-                    setDatosUser(response)
+                const storedUser = await AsyncStorage.getItem('user');
+
+                if (storedUser !== null) {
+                const user = JSON.parse(storedUser);
+                setFormData(user);
                 }else{
                     console.log('No hay datos del usuario en almacenamiento local');
+                }
+
+                const response = await axiosClient.get(`${IP}/users/buscar/${IdUser}`)
+                if(response.data){
+                    setFormData(response.data[0])
+                    console.log('Usuario:' , response.data[0]);
                 }
                 
             } catch (error) {
@@ -28,16 +43,33 @@ const ProfileUser = () => {
         fetchData()
     }, [])
 
+      const handleChange = (name, value) => {
+        setFormData({ ...formData, [name]: value });
+      };
 
+      const handleSubmit = async () => {
+        try {
+            await axiosClient.put(`/user/actualizar/${IdUser}`).then((response) => {
+                if(response.status == 200){
+                    console.log('Usuario actualizado');
+                    Alert.alert('Usuario actualizado con éxito');
+                }else{
+                    Alert.alert('Error al actualizar el usuario');
+                }
+            })
+        } catch (error) {
+            console.log('Error del servidor para actualizar perfil'+ error);
+        }
+      }
   return (
     <View style={styles.container}>
         <Text style={styles.title}> Perfil de usuario </Text>
         <View style={styles.cardInfo}>
             <Image 
-                source={{ uri: `${IP}/users/${datosUser.imagen_user}` }}
+                source={{ uri: `${IP}/users/${userData.imagen_user}` }}
                 style={{ width: 300, height: 300, marginBottom: 20 }}
             /> 
-            <Text style={[ styles.cardInfo, styles.textDataName]}> {datosUser.nombre} </Text>
+            <Text style={[ styles.cardInfo, styles.textDataName]}> {userData.nombre} </Text>
         </View>
         <View style={styles.cardInfo}>
             <View style={styles.cardPlus}>
@@ -45,24 +77,43 @@ const ProfileUser = () => {
                     <Text style={styles.textInfo}> Identificación: </Text>
                     <Text style={styles.textInfo}> Correo: </Text>
                     <Text style={styles.textInfo}> Telefono: </Text>
+                    <Text style={styles.textInfo}> Municicpio: </Text>
                     <Text style={styles.textInfo}> Dirección: </Text>
 
                 </View>
                 <View style={styles.data}>
-                    <Text style={styles.textData}> {datosUser.identificacion} </Text>
-                    <Text style={styles.textData}> {datosUser.correo} </Text>
-                    <Text style={styles.textData}> {datosUser.telefono} </Text> 
-                    <Text style={styles.textData}> {datosUser.municipio} - {datosUser.direccion} </Text>
+                    <TextInput 
+                        style={styles.textData} 
+                        value={formData.identificacion.toString()}
+                        onChange={(text) => handleChange('dentificacion', text)}
+                    />
+                    <TextInput 
+                        style={styles.textData} 
+                        value={formData.correo}
+                        onChange={(text) => handleChange('correo', text)}    
+                    />
+                    <TextInput 
+                        style={styles.textData}
+                        value={formData.telefono}
+                        onChange={(text) => handleChange('telefono', text)}
+                    /> 
+                    <Text 
+                        style={styles.textData} 
+                        value={formData.nombre_municipio}
+                        onChange={(text) => handleChange('municipio', text)}
+                    />
+                    <Text 
+                        style={styles.textData} 
+                        value={formData.direccion}
+                        onChange={(text) => handleChange('direccion', text)}
+                    />
 
                 </View>
             </View>
-            <View style={styles.cardData}>
-            </View>
-            <View style={styles.cardData}>
-            </View>
-            <View style={styles.cardData}>
-            </View>
-            <View style={styles.cardData}>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <TouchableOpacity style={styles.button} >
+                    <Text style={styles.textButon} onPress={() => vista('Actualizar')}> Editar </Text>
+                </TouchableOpacity>
             </View>
         </View>
     </View>
@@ -114,6 +165,21 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 30,
         marginTop: 15,
+        fontWeight: '700'
+    },
+    button: {
+        backgroundColor: 'rgb(255, 165, 0)',
+        padding: 15,
+        width: 100,
+        textAlign: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+        borderRadius: 20
+    },
+    textButon: {
+        color: 'black',
+        fontSize: 20,
         fontWeight: '700'
     }
 })

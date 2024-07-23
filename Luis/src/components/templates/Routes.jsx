@@ -19,13 +19,13 @@ const Stack = createNativeStackNavigator()
 const Routes = () => {
   return (
     <Stack.Navigator>
-        <Stack.Screen name='Home' component={Home} options={{
-          headerShown: false
-        }} />
-        <Stack.Screen name='AdoptBuddy' component={MainPage} options={{  }} />
-        <Stack.Screen name='Login' component={Login} options={{
-            
-        }} />
+      <Stack.Screen name='Home' component={Home} options={{
+        headerShown: false
+      }} />
+      <Stack.Screen name='AdoptBuddy' component={MainPage} options={{ headerShown: false }} />
+      <Stack.Screen name='Login' component={Login} options={{
+          
+      }} />
         <Stack.Screen 
           name='Register'
           component={UserForm}
@@ -34,13 +34,27 @@ const Routes = () => {
           name='Tabs'
           component={TabNavigation}
         />
-        <Stack.Screen name='Profile' component={ProfileUser} />
-        <Stack.Screen name='Pets' component={ListPets} />
-        <Stack.Screen name='Pet' component={PagePetDetaills} />
-        <Stack.Screen name='MisPets' component={MisMascotas} />
-        <Stack.Screen name='MisAdopts' component={MisAdopciones} />
-        <Stack.Screen name='MisSoli' component={MisSolicitudes} />
-        <Stack.Screen name='Solicitudes' component={Solicitudes} />
+        <Stack.Screen name='Profile' component={ProfileUser} options={{
+          headerStyle: { backgroundColor: 'rgb(255, 165, 0)' }
+        }} />
+        <Stack.Screen name='Pets' component={ListPets} options={{
+          headerStyle: { backgroundColor: 'rgb(255, 165, 0)' }
+        }} />
+        <Stack.Screen name='Pet' component={PagePetDetaills} options={{
+          headerStyle: { backgroundColor: 'rgb(255, 165, 0)' }
+        }} />
+        <Stack.Screen name='MisPets' component={MisMascotas} options={{
+          headerStyle: { backgroundColor: 'rgb(255, 165, 0)' }
+        }} />
+        <Stack.Screen name='MisAdopts' component={MisAdopciones} options={{
+          headerStyle: { backgroundColor: 'rgb(255, 165, 0)' }
+        }} />
+        <Stack.Screen name='MisSoli' component={MisSolicitudes} options={{
+          headerStyle: { backgroundColor: 'rgb(255, 165, 0)' }
+        }} />
+        <Stack.Screen name='Solicitudes' component={Solicitudes} options={{
+          headerStyle: { backgroundColor: 'rgb(255, 165, 0)' }
+        }} />
     </Stack.Navigator>
   )
 }
