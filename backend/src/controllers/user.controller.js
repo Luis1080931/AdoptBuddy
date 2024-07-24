@@ -38,7 +38,7 @@ export const registrarUser = async (req, res) => {
 
 export const actualizarUser = async (req, res) => {
     try {
-        const { identificacion, nombre, correo, telefono, direccion, password } = req.body;
+        const { identificacion, nombre, correo, telefono,municipio, direccion, password } = req.body;
         let image = req.file ? req.file.originalname : null;
         const {id} = req.params
 
@@ -50,10 +50,11 @@ export const actualizarUser = async (req, res) => {
                 nombre = ?, 
                 correo = ?, 
                 telefono = ?, 
+                municipio = ?,
                 direccion = ?, 
                 password = ?`
 
-        const params = [identificacion || anterior[0].identificacion, nombre || anterior[0].nombre, correo || anterior[0].correo, telefono || anterior[0].telefono, direccion || anterior[0].direccion, password || anterior[0].password]
+        const params = [identificacion || anterior[0].identificacion, nombre || anterior[0].nombre, correo || anterior[0].correo, telefono || anterior[0].telefono, municipio || anterior[0].municipio, direccion || anterior[0].direccion, password || anterior[0].password]
 
         if (image) {
             sql += `, imagen_user = ?`;
@@ -73,7 +74,7 @@ export const actualizarUser = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({
-            message: 'Error del servidor', error
+            message: 'Error del servidor' + error
         })
     }
 }
@@ -120,7 +121,7 @@ export const buscarUsusario = async (req, res) => {
                 imagen_user,
                 correo,
                 telefono,
-                nombre_municipio,
+                nombre_municipio AS municipio,
                 direccion 
 
                 FROM usuarios
