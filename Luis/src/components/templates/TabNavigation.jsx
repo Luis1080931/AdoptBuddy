@@ -6,21 +6,15 @@ import IconMenu from '../atoms/IconMenu';
 import IconProfile from '../atoms/IconProfile';
 import ListPets from '../pages/ListPets';
 import ProfileUser from '../pages/ProfileUser';
-import SideBar from '../organims/Sidebar';
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigation = () => {
-  const [visible, setVisible] = useState(false);
-
-  const handleMenuPress = () => {
-    setVisible(true);
-  };
 
   return (
     <>
       <Tab.Navigator>
-        <Tab.Screen
+        {/* <Tab.Screen
           name="Menu"
           component={() => null} 
           options={{
@@ -31,7 +25,7 @@ const TabNavigation = () => {
               </TouchableOpacity>
             ),
           }}
-        />
+        /> */}
         <Tab.Screen
           name="Pets"
           component={ListPets}
@@ -53,7 +47,7 @@ const TabNavigation = () => {
           }}
         />
       </Tab.Navigator>
-      <SideBar visible={visible} onClose={() => setVisible(false)} />
+      
     </>
   );
 };

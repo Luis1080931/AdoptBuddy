@@ -125,7 +125,7 @@ const ListPets = () => {
           visible={modalOpen}
           onClose={vista}
           title={title}
-          data={mascotas}
+          datos={mascotas}
           petData={petData}
           petId={petId}
         />

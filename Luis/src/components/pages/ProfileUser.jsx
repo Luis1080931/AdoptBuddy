@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
+import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { IP } from '../services/Ip.jsx'
@@ -10,11 +10,11 @@ const ProfileUser = () => {
     const [formData, setFormData] = useState({
         identificacion: '',
         nombre: '',
-        email: '',
+        imagen_user: '',
+        correo: '',
         telefono: '',
         municipio: '',
         direccion: '',
-        password: ''
     })
 
     useEffect(() => {
@@ -23,21 +23,30 @@ const ProfileUser = () => {
                 const storedUser = await AsyncStorage.getItem('user');
 
                 if (storedUser !== null) {
-                const user = JSON.parse(storedUser);
-                setFormData(user);
+                const response = JSON.parse(storedUser);
+                IdUser = response.id
+                setFormData(response);
+                console.log('Response', response);
                 }else{
                     console.log('No hay datos del usuario en almacenamiento local');
                 }
 
-                const response = await axiosClient.get(`${IP}/users/buscar/${IdUser}`)
+                /* if (storedUser !== null) {
+                    const response = JSON.parse(storedUser);
+                    IdUser = response.id
+                } */
+                    console.log('User async', IdUser);
+
+                /* const response = await axiosClient.get(`${IP}/users/buscar/${IdUser}`)
                 if(response.data){
-                    setFormData(response.data[0])
+                    setFormData(response.data)
                     console.log('Usuario:' , response.data[0]);
-                }
+                } */
                 
             } catch (error) {
                 console.log('Error de fetching de data' + error);
             }
+            console.log('Form data' , formData);
         }
 
         fetchData()
@@ -49,7 +58,7 @@ const ProfileUser = () => {
 
       const handleSubmit = async () => {
         try {
-            await axiosClient.put(`/user/actualizar/${IdUser}`).then((response) => {
+            await axiosClient.put(`/users/actualizar/${IdUser}`).then((response) => {
                 if(response.status == 200){
                     console.log('Usuario actualizado');
                     Alert.alert('Usuario actualizado con éxito');
@@ -66,10 +75,10 @@ const ProfileUser = () => {
         <Text style={styles.title}> Perfil de usuario </Text>
         <View style={styles.cardInfo}>
             <Image 
-                source={{ uri: `${IP}/users/${userData.imagen_user}` }}
+                source={{ uri: `${IP}/users/${formData.imagen_user}` }}
                 style={{ width: 300, height: 300, marginBottom: 20 }}
             /> 
-            <Text style={[ styles.cardInfo, styles.textDataName]}> {userData.nombre} </Text>
+            <Text style={[ styles.cardInfo, styles.textDataName]}> {formData.nombre} </Text>
         </View>
         <View style={styles.cardInfo}>
             <View style={styles.cardPlus}>
@@ -77,15 +86,16 @@ const ProfileUser = () => {
                     <Text style={styles.textInfo}> Identificación: </Text>
                     <Text style={styles.textInfo}> Correo: </Text>
                     <Text style={styles.textInfo}> Telefono: </Text>
-                    <Text style={styles.textInfo}> Municicpio: </Text>
+                    <Text style={styles.textInfo}> Municipio: </Text>
                     <Text style={styles.textInfo}> Dirección: </Text>
 
                 </View>
                 <View style={styles.data}>
                     <TextInput 
                         style={styles.textData} 
+                        keyboardType='numeric'
                         value={formData.identificacion.toString()}
-                        onChange={(text) => handleChange('dentificacion', text)}
+                        onChange={(text) => handleChange('identificacion', text)}
                     />
                     <TextInput 
                         style={styles.textData} 
@@ -97,12 +107,12 @@ const ProfileUser = () => {
                         value={formData.telefono}
                         onChange={(text) => handleChange('telefono', text)}
                     /> 
-                    <Text 
+                    <TextInput 
                         style={styles.textData} 
-                        value={formData.nombre_municipio}
+                        value={formData.municipio}
                         onChange={(text) => handleChange('municipio', text)}
                     />
-                    <Text 
+                    <TextInput 
                         style={styles.textData} 
                         value={formData.direccion}
                         onChange={(text) => handleChange('direccion', text)}
@@ -112,7 +122,7 @@ const ProfileUser = () => {
             </View>
             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <TouchableOpacity style={styles.button} >
-                    <Text style={styles.textButon} onPress={() => vista('Actualizar')}> Editar </Text>
+                    <Text style={styles.textButon} onPress={handleSubmit}> Editar </Text>
                 </TouchableOpacity>
             </View>
         </View>

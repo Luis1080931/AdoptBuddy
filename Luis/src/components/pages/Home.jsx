@@ -5,7 +5,7 @@ import TabNavigation from '../templates/TabNavigation'
 const Home = () => {
   return (
     <View>
-      <TabNavigation />
+      
     </View>
   )
 }

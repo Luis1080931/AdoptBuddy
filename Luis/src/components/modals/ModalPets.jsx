@@ -4,7 +4,7 @@ import UserForm from '../pages/UserForm';
 import PetForm from '../organims/PetForm';
 import LinearGradient from 'react-native-linear-gradient';
 
-const ModalPet = ({visible, onClose, title, data, petData, petId}) => {
+const ModalPet = ({visible, onClose, title, datos, petData, petId}) => {
     const colors = {
         white: 'rgb(255, 255, 255)',
         teal: 'rgb(0, 128, 128)',
@@ -62,7 +62,7 @@ const ModalPet = ({visible, onClose, title, data, petData, petId}) => {
                             margin: 12,
                         }}
                         >
-                            <PetForm closeModal={onClose} title={title} data={data} petData={petData} petId={petId}/>
+                            <PetForm closeModal={onClose} title={title} datos={datos} petData={petData} petId={petId}/>
                         </View>
                     </ScrollView>
                 </LinearGradient>

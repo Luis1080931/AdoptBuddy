@@ -51,7 +51,7 @@ const Login = () => {
       const response = await axios.post(baseURL, formData)
       
         if(response.status === 200){
-            navigation.navigate('Home');
+            navigation.navigate('Bienvenido');
             Alert.alert('Bienvenido');
           }
           
