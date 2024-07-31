@@ -112,6 +112,7 @@ const PagePetDetaills = () => {
                     <Text style={styles.textInfo}> Vacunas: {mascota.vacunas}</Text>
                     <Text style={styles.textInfo}> Hábitos: {mascota.habitos}</Text>
                     <Text style={styles.textInfo}> Estado actual: {mascota.estado}</Text>
+                    <Text style={styles.textInfo}> Fecha registro: {mascota.fecha}</Text>
                 </View>
                 <View>
                     {mascota.estado === 'sin adoptar' ? (

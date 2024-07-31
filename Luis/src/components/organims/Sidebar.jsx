@@ -6,8 +6,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const SideBar = ({ visible, onClose }) => {
   const [slideAnim] = useState(new Animated.Value(-300));
   const [selectedButton, setSelectedButton] = useState('');
-  const [rolUser, setRolUser] = useState('');
+  const [rolUser, setRolUser] = useState(null);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userValue = await AsyncStorage.getItem('user');
+      if (userValue) {
+        const response = JSON.parse(userValue);
+        const userRol = response.rol.toLowerCase();
+        setRolUser(userRol);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     if (visible) {
@@ -24,17 +37,6 @@ const SideBar = ({ visible, onClose }) => {
       }).start();
     }
   }, [visible]);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const userValue = await AsyncStorage.getItem('user');
-      if (userValue !== null) {
-        const response = JSON.parse(userValue);
-        setRolUser(response.rol);
-      }
-    }
-    fetchUser();
-  }, []);
 
   const handlePress = (screenName) => {
     navigation.navigate(screenName);
@@ -93,18 +95,32 @@ const SideBar = ({ visible, onClose }) => {
                 <Text style={textStyle('PetsAdopt')}>Mis adopciones</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={buttonStyle('PetsAdopt')}
+                style={buttonStyle('MisSoli')}
                 onPress={() => handlePress('MisSoli')}
               >
-                <Text style={textStyle('PetsAdopt')}>Mis solicitudes</Text>
+                <Text style={textStyle('MisSoli')}>Mis solicitudes</Text>
               </TouchableOpacity>
-              {rolUser && rolUser === 'admin' && (
-                <TouchableOpacity
-                  style={buttonStyle('PetsAdopt')}
-                  onPress={() => handlePress('Solicitudes')}
+              {rolUser === 'admin' && (
+                <>
+                  <TouchableOpacity
+                    style={buttonStyle('Solicitudes')}
+                    onPress={() => handlePress('Solicitudes')}
+                  >
+                    <Text style={textStyle('Solicitudes')}>Solicitudes</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                  style={buttonStyle('Historial')}
+                  onPress={() => handlePress('Historial')}
                 >
-                  <Text style={textStyle('PetsAdopt')}>Solicitudes</Text>
+                  <Text style={textStyle('Historial')}>Historial Mascotas</Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                  style={buttonStyle('HistorialAdopciones')}
+                  onPress={() => handlePress('HistorialAdopciones')}
+                >
+                  <Text style={textStyle('HistorialAdopciones')}>Historial Adopciones</Text>
+                </TouchableOpacity>
+              </>
               )}
               <TouchableOpacity style={styles.button} onPress={handleLogout}>
                 <Text style={styles.buttonText}>Cerrar Sesión</Text>

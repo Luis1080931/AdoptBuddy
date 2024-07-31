@@ -132,7 +132,7 @@ const UserForm = ({ closeModal, title, datos, userData, userId }) => {
     }
 
     return (
-        <ScrollView>
+        
             <View style={styles.container}>
                 <Text style={styles.texts}> Bienvenido, registrate y se uno de los muchos usuarios que cambian la vida de estas mascotas </Text>
                 <View>
@@ -183,14 +183,16 @@ const UserForm = ({ closeModal, title, datos, userData, userId }) => {
                     </View>
                 </View>
             </View>
-        </ScrollView>
+        
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        width: '100%',
+        textAlign: 'center'
     },
     containerInput: {
         width: 300,
@@ -198,7 +200,7 @@ const styles = StyleSheet.create({
     },
     inputs: {
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: 'black',
         borderRadius: 5,
         color: '#333',
         padding: 10
@@ -215,25 +217,27 @@ const styles = StyleSheet.create({
         margin: 20
     },
     button: {
-        backgroundColor: '#337FA9',
+        backgroundColor: '#fff',
         padding: 10,
         borderRadius: 5,
         margin: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        width: 200
+        width: 200,
+        color: 'black'
     },
     buttonImagePicker: {
-        backgroundColor: '#6C757D',
         padding: 10,
         borderRadius: 5,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'black'
     },
     textButton: {
         fontSize: 18,
         fontWeight: '600',
-        color: '#FFF'
+        color: '#000'
     },
     containerButton: {
         width: 300,

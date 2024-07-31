@@ -1,4 +1,4 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native'
+import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Alert, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { IP } from '../services/Ip.jsx'
@@ -17,6 +17,9 @@ const ProfileUser = () => {
         direccion: '',
     })
 
+    const [user, setUser] = useState([])
+    const [idUser, setIdUser] = useState(null)
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -24,7 +27,7 @@ const ProfileUser = () => {
 
                 if (storedUser !== null) {
                 const response = JSON.parse(storedUser);
-                IdUser = response.id
+                setIdUser(response.id)
                 setFormData(response);
                 console.log('Response', response);
                 }else{
@@ -35,13 +38,13 @@ const ProfileUser = () => {
                     const response = JSON.parse(storedUser);
                     IdUser = response.id
                 } */
-                    console.log('User async', IdUser);
+                    console.log('User async', idUser);
 
-                /* const response = await axiosClient.get(`${IP}/users/buscar/${IdUser}`)
+                const response = await axiosClient.get(`${IP}/users/buscar/${idUser}`)
                 if(response.data){
-                    setFormData(response.data)
+                    setUser(response.data[0])
                     console.log('Usuario:' , response.data[0]);
-                } */
+                }
                 
             } catch (error) {
                 console.log('Error de fetching de data' + error);
@@ -71,6 +74,7 @@ const ProfileUser = () => {
         }
       }
   return (
+    <ScrollView>
     <View style={styles.container}>
         <Text style={styles.title}> Perfil de usuario </Text>
         <View style={styles.cardInfo}>
@@ -107,11 +111,12 @@ const ProfileUser = () => {
                         value={formData.telefono}
                         onChange={(text) => handleChange('telefono', text)}
                     /> 
-                    <TextInput 
+                    {/* <TextInput 
                         style={styles.textData} 
                         value={formData.municipio}
                         onChange={(text) => handleChange('municipio', text)}
-                    />
+                    /> */}
+                    <Text style={styles.textData}> {user.municipio} </Text>
                     <TextInput 
                         style={styles.textData} 
                         value={formData.direccion}
@@ -127,6 +132,7 @@ const ProfileUser = () => {
             </View>
         </View>
     </View>
+    </ScrollView>
   )
 }
 
@@ -153,7 +159,8 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 40,
         borderBottomLeftRadius: 40,
         padding: 10,
-        marginBottom: 10
+        marginBottom: 10,
+        height: 52
     },
     textData: {
         fontSize: 20,
@@ -163,7 +170,8 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 40,
         borderBottomRightRadius: 40,
         padding: 10,
-        marginBottom: 10
+        marginBottom: 10,
+        height: 52
     },
     textDataName: {
         fontSize: 20,

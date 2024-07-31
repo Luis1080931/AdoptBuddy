@@ -15,6 +15,9 @@ import MisSolicitudes from '../pages/MisSolicitudes';
 import Solicitudes from '../pages/Solicitudes';
 import SideBar from '../organims/Sidebar';
 import IconMenu from '../atoms/IconMenu';
+import HistorialPets from '../pages/Historial';
+import HistorialAdopciones from '../pages/HistorialAdopciones';
+import PageUserDetails from '../pages/Profile';
 
 const Stack = createNativeStackNavigator();
 
@@ -45,12 +48,19 @@ const Routes = () => {
         <Stack.Screen name='Login' component={Login} />
         <Stack.Screen name='Register' component={UserForm} />
         <Stack.Screen name='Profile' component={ProfileUser} options={{ headerStyle: { backgroundColor: 'rgb(255, 165, 0)' } }} />
-        <Stack.Screen name='Pets' component={ListPets} options={{ headerStyle: { backgroundColor: 'rgb(255, 165, 0)' } }} />
+        {/* <Stack.Screen name='Pets' component={ListPets} options={{ headerStyle: { backgroundColor: 'rgb(255, 165, 0)' } }} /> */}
         <Stack.Screen name='Pet' component={PagePetDetaills} options={{ headerStyle: { backgroundColor: 'rgb(255, 165, 0)' } }} />
         <Stack.Screen name='MisPets' component={MisMascotas} options={{ headerStyle: { backgroundColor: 'rgb(255, 165, 0)' } }} />
         <Stack.Screen name='MisAdopts' component={MisAdopciones} options={{ headerStyle: { backgroundColor: 'rgb(255, 165, 0)' } }} />
         <Stack.Screen name='MisSoli' component={MisSolicitudes} options={{ headerStyle: { backgroundColor: 'rgb(255, 165, 0)' } }} />
         <Stack.Screen name='Solicitudes' component={Solicitudes} options={{ headerStyle: { backgroundColor: 'rgb(255, 165, 0)' } }} />
+        <Stack.Screen name='Historial' component={HistorialPets} options={{ headerStyle: {
+          backgroundColor: 'rgb(255, 165, 0)'
+        } }} />
+        <Stack.Screen name='HistorialAdopciones' component={HistorialAdopciones} options={{ headerStyle: {
+          backgroundColor: 'rgb(255, 165, 0)'
+        } }} />
+        <Stack.Screen name='ProfileUser' component={PageUserDetails} options={{ headerStyle: { backgroundColor: 'rgb(255, 165, 0)' } }} />
       </Stack.Navigator>
     </>
   );

@@ -11,20 +11,18 @@ import IconEdit from '../atoms/IconEdit'
 import IconPlus from '../atoms/IconPlus'
 import ModalPet from '../modals/ModalPets'
 
-const ListPets = () => {
+const HistorialPets = () => {
 
   const [mascotas, setMascotas] = useState([])
   const navigation = useNavigation()
-  const [modalOpen, setModalOpen] = useState(false)
   const [petData, setPetData] = useState(null)
   const [petId, setPetId] = useState(null)
-  const [title, setTitle] = useState('')
 
   
   const getMascotas = async () => {
     try {
-      const response = await axios.get(`${IP}/mascotas/listar`)
-      /* console.log('Mascotas listadas', response.data) */
+      const response = await axios.get(`${IP}/mascotas/listarHistorial`)
+     /*  console.log('Mascotas listadas', response.data) */
       setMascotas(response.data)
       
     } catch (error) {
@@ -83,7 +81,7 @@ const ListPets = () => {
     <>
       <ScrollView>
         <View >
-          <Text style={styles.title}> Mascotas disponibles </Text>
+          <Text style={styles.title}> Historial de mascotas </Text>
           <FlatList 
             data={mascotas}
             keyExtractor={item => item.id_mascota}
@@ -94,41 +92,21 @@ const ListPets = () => {
                     source={{ uri: `${IP}/img/${item.imagen}` }}
                     style={styles.mascotaImage}
                   />
-                  <Text style={styles.texto}> {item.nombre_mascota} </Text>
+                  <View>
+                    <Text style={styles.texto}> {item.nombre_mascota} </Text>
+                    <Text style={styles.texto}> {item.estado} </Text>
+                  </View>
                 </View>
                 <View style={styles.mascotaDescription}>
                   <TouchableOpacity onPress={() => handleVer(item.id_mascota)}>
                     <IconVer />
                   </TouchableOpacity>
-                  {rolUser && rolUser === 'admin' ? (
-                    <>
-                      <TouchableOpacity onPress={() => vista('Actualizar', item, item.id_mascota)}>
-                        <IconEdit />
-                      </TouchableOpacity>
-                      <TouchableOpacity onPress={() => deletePet(item.id_mascota)}>
-                        <IconDelete />
-                      </TouchableOpacity>
-                    </>
-                  ): ''}
                 </View>
               </View>
             )}
           />
         </View>
       </ScrollView>
-      <View style={styles.addButton}>
-          <TouchableOpacity onPress={() => vista('Registrar')}>
-            <IconPlus style={styles.iconMas} />
-          </TouchableOpacity>
-        </View>
-        <ModalPet 
-          visible={modalOpen}
-          onClose={() => setModalOpen(false)}
-          title={title}
-          datos={getMascotas()}
-          petData={petData}
-          petId={petId}
-        />
     </>
   )
 }
@@ -209,4 +187,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default ListPets
+export default HistorialPets
