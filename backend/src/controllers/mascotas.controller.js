@@ -48,8 +48,8 @@ export const actualizarMascota = async (req, res) => {
         let sql = `
             UPDATE mascotas SET 
             nombre_mascota = ?,
-            genero = ?, 
-            categoria = ?, 
+            fk_genero = ?, 
+            fk_categoria = ?, 
             esteril = ?, 
             vacunas = ?, 
             habitos = ?, 
@@ -57,7 +57,7 @@ export const actualizarMascota = async (req, res) => {
             estado = ? 
         `
 
-        const params =  [nombre || anterior[0].nombre, genero || anterior[0].genero, categoria || anterior[0].categoria, esteril || anterior[0].esteril, vacunas || anterior[0].vacunas, habitos || anterior[0].habitos, edad || anterior[0].edad, estado || anterior[0].estado]
+        const params =  [nombre || anterior[0].nombre, genero || anterior[0].fk_genero, categoria || anterior[0].fk_categoria, esteril || anterior[0].esteril, vacunas || anterior[0].vacunas, habitos || anterior[0].habitos, edad || anterior[0].edad, estado || anterior[0].estado]
 
         if (image) {
             sql += `, image = ?`;
@@ -71,7 +71,7 @@ export const actualizarMascota = async (req, res) => {
         const [rows] = await pool.query(sql, params)
 
         if(rows.affectedRows>0){
-            res.json({message: 'Mascota actualizada exitosamente'})
+            res.status(201).json({message: 'Mascota actualizada exitosamente'})
         }else{
             res.status(403).json({message: 'Error al actualizar mascota'})
         }
@@ -116,9 +116,9 @@ export const listarMascotas = async(req, res) => {
             m.nombre_mascota,
             m.imagen, 
             g.nombre_genero AS genero,
-            g.id AS id_genero,
+            g.id_genero AS id_genero,
             c.nombre_categoria AS categoria,
-            c.id AS id_categoria,
+            c.id_categoria AS id_categoria,
             m.esteril,
             m.vacunas, 
             m.habitos, 
@@ -129,11 +129,55 @@ export const listarMascotas = async(req, res) => {
             FROM mascotas m
 
             JOIN 
-                genero g ON m.fk_genero = g.id
+                genero g ON m.fk_genero = g.id_genero
             JOIN 
-                categoria c ON m.fk_categoria = c.id
+                categoria c ON m.fk_categoria = c.id_categoria
 
             WHERE estado = 2
+        `
+
+        const [result] = await pool.query(sql)
+
+        if(result.length>0){
+            res.status(200).json(result)
+        }else{
+            res.status(404).json({
+                status: 404,
+                message: 'No hay mascotas registradas'
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            status: 500,
+            message: 'Error del servidor', error
+        })
+    }
+}
+
+export const listarMascotasHistorial = async(req, res) => {
+    try {
+        let sql = `
+            SELECT 
+            m.id_mascota,
+            m.nombre_mascota,
+            m.imagen, 
+            g.nombre_genero AS genero,
+            g.id_genero AS id_genero,
+            c.nombre_categoria AS categoria,
+            c.id_categoria AS id_categoria,
+            m.esteril,
+            m.vacunas, 
+            m.habitos, 
+            m.edad, 
+            m.estado,
+            m.fk_dueno
+
+            FROM mascotas m
+
+            JOIN 
+                genero g ON m.fk_genero = g.id_genero
+            JOIN 
+                categoria c ON m.fk_categoria = c.id_categoria
         `
 
         const [result] = await pool.query(sql)
@@ -169,14 +213,15 @@ export const buscarMascota = async(req, res) => {
             m.habitos, 
             m.edad, 
             u.nombre AS dueno,
-            m.estado
+            m.estado,
+            DATE_FORMAT(m.fecha, '%Y-%M-%d') AS fecha
 
             FROM mascotas m
 
             JOIN 
-                genero g ON m.fk_genero = g.id
+                genero g ON m.fk_genero = g.id_genero
             JOIN 
-                categoria c ON m.fk_categoria = c.id
+                categoria c ON m.fk_categoria = c.id_categoria
             JOIN 
                 usuarios u ON m.fk_dueno = u.id
 

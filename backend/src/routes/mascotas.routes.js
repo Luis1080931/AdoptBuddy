@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registrarMascota, actualizarMascota, eliminarMascota, listarMascotas, buscarMascota, adoptarMascota, mascotasUser, solicitarMascota, disponibleMascota } from "../controllers/mascotas.controller.js";
+import { registrarMascota, actualizarMascota, eliminarMascota, listarMascotas, buscarMascota, adoptarMascota, mascotasUser, solicitarMascota, disponibleMascota, listarMascotasHistorial } from "../controllers/mascotas.controller.js";
 import { cargarImage } from "../controllers/mascotas.controller.js";
 
 const rutaMascotas = Router()
@@ -11,6 +11,7 @@ rutaMascotas.put('/cancel/:id', disponibleMascota)
 rutaMascotas.put('/solicitar/:id', solicitarMascota)
 rutaMascotas.delete('/eliminar/:id', eliminarMascota)
 rutaMascotas.get('/listar', listarMascotas)
+rutaMascotas.get('/listarHistorial', listarMascotasHistorial)
 rutaMascotas.get('/buscar/:id', buscarMascota)
 rutaMascotas.get('/petUser/:id', mascotasUser)
 

@@ -45,26 +45,27 @@ export const actualizarAdopcion = async (req, res) => {
 
 export const listarAdopciones = async(req, res) => {
     try {
-        const {id} = req.params
+       
         let sql = `
                 SELECT 
-                a.fecha,
-                u.* AS persona, 
-                m.* AS mascota
-                a.estado
+                u.*, 
+                m.*,
+                a.estado,
+                DATE_FORMAT(a.fecha, '%Y-%M-%d') AS fecha
                 
                 FROM adoptar a
 
                 JOIN 
-                    usuarios u ON a.persona = u.identificacion
+                    usuarios u ON a.persona = u.id
                 JOIN 
                     mascotas m ON a.mascota = m.id_mascota 
 
-                WHERE estado = 2
+                WHERE a.estado = 2
         `
 
-        const [result] = await pool.query(sql, [id])
-        if(result.length>0){
+        const [result] = await pool.query(sql)
+        
+        if(result.length > 0){
             res.status(200).json(result)
         }else{
             res.status(404).json({
