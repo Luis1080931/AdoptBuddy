@@ -49,12 +49,25 @@ const UserForm = ({ closeModal, title, datos, userData, userId }) => {
                 console.log('ImagePicker Error: ', response.errorMessage);
             } else {
                 const source = { uri: response.assets[0].uri };
-                setFormData({ ...formData, image: source });
+                const fileName = response.assets[0].fileName; 
+                setFormData({ ...formData, image: source, imageName: fileName });
             }
         });
     };
 
+    const validateForm = () => {
+        const { identificacion, nombre, correo, telefono, municipio, direccion, password } = formData;
+        if (!identificacion || !nombre || !correo || !telefono || !municipio || !direccion || !password) {
+            Alert.alert('Error', 'Todos los campos son obligatorios.');
+            return false;
+        }
+        return true;
+    };
+
     const handleSubmit = async () => {
+
+        if (!validateForm()) return;
+
         try {
             const data = new FormData();
             data.append('identificacion', formData.identificacion);
@@ -65,11 +78,11 @@ const UserForm = ({ closeModal, title, datos, userData, userId }) => {
             data.append('direccion', formData.direccion);
             data.append('password', formData.password);
 
-            if (formData.image) {
+            if (formData.image && formData.image.uri) {
                 data.append('image', {
                     uri: formData.image.uri,
                     type: 'image/jpeg',
-                    name: 'profile.jpg',
+                    name: formData.imageName,  // Usar el nombre del archivo original
                 });
             }
             
@@ -93,6 +106,7 @@ const UserForm = ({ closeModal, title, datos, userData, userId }) => {
     };
 
     const handleActualizar = async () => {
+
         try {
 
             const data = new FormData();
@@ -104,11 +118,11 @@ const UserForm = ({ closeModal, title, datos, userData, userId }) => {
             data.append('direccion', formData.direccion);
             data.append('password', formData.password);
 
-            if (formData.image) {
+            if (formData.image && formData.image.uri) {
                 data.append('image', {
                     uri: formData.image.uri,
                     type: 'image/jpeg',
-                    name: 'profile.jpg',
+                    name: formData.imageName,  // Usar el nombre del archivo original
                 });
             }
 
@@ -137,9 +151,15 @@ const UserForm = ({ closeModal, title, datos, userData, userId }) => {
                 <Text style={styles.texts}> Bienvenido, registrate y se uno de los muchos usuarios que cambian la vida de estas mascotas </Text>
                 <View>
                     <Text style={styles.title}> {title} Usuario </Text>
+                    {formData.image && <Image source={formData.image} style={styles.image} />}
                     <View style={styles.containerInput}>
                         <Text style={styles.texts}>Identificación: </Text>
-                        <TextInput style={styles.inputs} value={formData.identificacion} onChangeText={(value) => handleChange('identificacion', value)} />
+                        <TextInput 
+                            style={styles.inputs} 
+                            value={formData.identificacion} 
+                            onChangeText={(value) => handleChange('identificacion', value)} 
+                            keyboardType="numeric"
+                        />
                     </View>
                     <View style={styles.containerInput}>
                         <Text style={styles.texts}>Nombre: </Text>
@@ -151,7 +171,12 @@ const UserForm = ({ closeModal, title, datos, userData, userId }) => {
                     </View>
                     <View style={styles.containerInput}>
                         <Text style={styles.texts}>Teléfono: </Text>
-                        <TextInput style={styles.inputs} value={formData.telefono} onChangeText={(value) => handleChange('telefono', value)} />
+                        <TextInput 
+                            style={styles.inputs} 
+                            value={formData.telefono} 
+                            onChangeText={(value) => handleChange('telefono', value)} 
+                            keyboardType='numeric'
+                        />
                     </View>
                     <View style={styles.containerInput}>
                         <Text style={styles.texts}>Municipio: </Text>
@@ -174,7 +199,7 @@ const UserForm = ({ closeModal, title, datos, userData, userId }) => {
                         <TouchableOpacity onPress={handleImagePicker} style={styles.buttonImagePicker}>
                             <Text style={styles.textButton}>Seleccionar Imagen</Text>
                         </TouchableOpacity>
-                        {formData.image && <Image source={formData.image} style={styles.image} />}
+                        
                     </View>
                     <View style={styles.containerButton}>
                         <TouchableOpacity style={styles.button} onPress={title === 'Registrar' ? handleSubmit : handleActualizar}>

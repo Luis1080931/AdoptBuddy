@@ -1,15 +1,11 @@
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native'
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import axiosClient from '../services/axiosClient'
 import { IP } from '../services/Ip'
 import axios from 'axios'
 import IconVer from '../atoms/IconVer'
-import IconDelete from '../atoms/IconDelete'
 import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import IconEdit from '../atoms/IconEdit'
-import IconPlus from '../atoms/IconPlus'
-import ModalPet from '../modals/ModalPets'
 
 const HistorialAdopciones = () => {
 
@@ -24,102 +20,90 @@ const HistorialAdopciones = () => {
 
     const fetchUser = async () => {
       const userValue = await AsyncStorage.getItem('user')
-      if(userValue !== null){
+      if (userValue !== null) {
         const response = JSON.parse(userValue)
-        rolUser = response.rol
-        idUser = response.id
+        // Assuming rolUser and idUser are used somewhere else
+        // const rolUser = response.rol
+        // const idUser = response.id
       }
-      console.log('User async', rolUser);
     }
     fetchUser()
   }, [])
-  
+
   const getSolicitudes = async () => {
     try {
       const response = await axiosClient.get(`/adopciones/listar`)
-      console.log('solicitudes listadas', response.data)
+      console.log('Solicitudes listadas', response.data)
       setSolicitudes(response.data)
-      
     } catch (error) {
-      console.log('Error del servidor para listar solicitudes' + error);
+      console.log('Error del servidor para listar solicitudes: ' + error);
     }
   }
 
-  
   useEffect(() => {
     getSolicitudes()
   }, [])
 
-  const handleVer = async (id) => {
+  const handleVer = (id) => {
     navigation.navigate('Pet', { petId: id })
   }
 
-  const handleProfile = async (id) => {
+  const handleProfile = (id) => {
     navigation.navigate('ProfileUser', { userId: id })
   }
 
   return (
-    <>
-        <ScrollView>
-          <View>
-          {solicitudes ? (
-            <>
-            <Text style={styles.title}> Historial de adopciones </Text>
-            <FlatList 
-              data={solicitudes}
-              keyExtractor={item => item.id_mascota}
-              renderItem={({ item }) => (
-                <View style={{ flexDirection: 'column' }}>
-                  <View style={styles.card}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                      <View style={{ flexDirection: 'column', alignItems: 'center', marginRight: 45  }}>
-                        <Text style={styles.texto}> Mascota </Text>
-                        <Image 
-                          source={{ uri: `${IP}/img/${item.imagen}` }}
-                          style={styles.mascotaImage}
-                        />
-                        <Text style={styles.texto}> {item.nombre_mascota} </Text>
-                        <TouchableOpacity style={{ marginTop: 15 }} onPress={() => handleVer(item.id_mascota)}>
-                          <IconVer />
-                        </TouchableOpacity>
-                      </View>
-                      <View style={{ flexDirection: 'column', alignItems: 'center'  }}>
-                        <Text style={styles.texto}> Adoptante </Text>
-                        <Image 
-                          source={{ uri: `${IP}/users/${item.imagen_user}` }}
-                          style={styles.mascotaImage}
-                        />
-                        <Text style={styles.texto}> {item.nombre} </Text>
-                        <TouchableOpacity style={{ marginTop: 15 }} onPress={() => handleProfile(item.id)}>
-                          <IconVer />
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                      <Text style={styles.texto}> {item.fecha} </Text>
+    <View style={styles.container}>
+      {solicitudes.length > 0 ? (
+        <>
+          <Text style={styles.title}>Historial de adopciones</Text>
+          <FlatList 
+            data={solicitudes}
+            keyExtractor={item => item.id_mascota.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.card}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+
+                  <View style={{ flexDirection: 'column', alignItems: 'center', marginRight: 45 }}>
+                    <Text style={styles.texto}>Mascota</Text>
+                    <Image 
+                      source={{ uri: `${IP}/img/${item.imagen}` }}
+                      style={styles.mascotaImage}
+                    />
+                    <Text style={styles.texto}>{item.nombre_mascota}</Text>
+                    <TouchableOpacity style={styles.iconButton} onPress={() => handleVer(item.id_mascota)}>
+                      <IconVer />
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.column}>
+                    <Text style={styles.texto}>Adoptante</Text>
+                    <Image 
+                      source={{ uri: `${IP}/users/${item.imagen_user}` }}
+                      style={styles.mascotaImage}
+                    />
+                    <Text style={styles.texto}>{item.nombre}</Text>
+                    <TouchableOpacity style={styles.iconButton} onPress={() => handleProfile(item.id)}>
+                      <IconVer />
+                    </TouchableOpacity>
                   </View>
                 </View>
-              )}
-            />
-            </>
-          ): (
-            <Text> Aun no tienes adopciones </Text>
-          )}
-          </View>
-        </ScrollView>
-
-        {/* <ModalPet 
-          visible={modalOpen}
-          onClose={vista}
-          title={title}
-          data={mascotas}
-          petData={petData}
-          petId={petId}
-        /> */}
-    </>
+                <Text style={styles.texto}>{item.fecha}</Text>
+              </View>
+            )}
+          />
+        </>
+      ) : (
+        <Text style={styles.noSolicitudes}>Sin historial de adopciones</Text>
+      )}
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5FCFF',
+  },
   card: {
     backgroundColor: '#fff',
     alignItems: 'center',
@@ -131,53 +115,19 @@ const styles = StyleSheet.create({
     height: 300,
     justifyContent: 'space-between'
   },
-  iconMas: {
-    color: 'white'
-  },
-  icon: {
-    fontSize: 20,
-    marginLeft: 80
-  },
-  mascota: {
-    width: 200,
-    height: 200,
-    resizeMode: 'contain',
-    marginBottom: 10,
+  column: {
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   texto: {
     fontSize: 25,
     fontWeight: '700'
-  },
-  mascotaName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  mascotaDescription: {
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: 10
   },
   mascotaImage: {
     width: 80,
     height: 80,
     borderRadius: 50,
     margin: 10
-  },
-  addButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#336699',
-    borderRadius: 50,
-    height: 50,
-    width: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  addImage: {
-    width: 50,
-    height: 50,
   },
   title: {
     fontSize: 30,
@@ -186,44 +136,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginLeft: 10,
     color: 'black',
-    justifyContent: 'center',
-    alignItems: 'center',
     textAlign: 'center'
   },
-  buttonAcciones: {
-    justifyContent: 'center',
-    flexDirection: 'row',
+  iconButton: {
+    marginTop: 15
   },
-  buttonAcept: {
-    backgroundColor: '#336699',
-    color: 'black',
-    padding: 10,
-    borderRadius: 5,
-    width: 130,
-    margin: 10,
+  noSolicitudes: {
+    fontSize: 18,
     fontWeight: 'bold',
-    justifyContent: 'center',
     textAlign: 'center',
-    alignItems: 'center'
-  },
-  buttonCancel: {
-    backgroundColor: 'red',
-    color: 'black',
-    padding: 10,
-    borderRadius: 5,
-    width: 130,
-    margin: 10,
-    fontWeight: 'bold',
-    justifyContent: 'center',
-    textAlign: 'center',
-    alignItems: 'center'
-  },
-  textoButton: {
-    fontSize: 25,
-    fontWeight: '700',
-    color: 'white'
-  },
+    marginTop: 20,
+  }
 })
-
 
 export default HistorialAdopciones

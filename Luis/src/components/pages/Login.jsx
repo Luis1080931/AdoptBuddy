@@ -1,9 +1,9 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Alert, ImageBackground } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-/* import NetInfo from '@react-native-community/netinfo' */
+import AuthContext from '../../context/AuthContext';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -13,38 +13,18 @@ const Login = () => {
     password: '',
   });
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const { setRol, setIdUser } = useContext(AuthContext)
 
 
   const toggleSecureEntry = () => {
     setSecureTextEntry(!secureTextEntry);
-  };
-
- /*  useEffect(()=>{
-    const unsubscribe = NetInfo.addEventListener(state =>{
-      console.log('Tipo de conexion', state.type);
-      console.log('Is conected??', state.isConnected);
-      if (!state.isConnected) {
-        Alert.alert('Sin conexion ', 'Por favor,  verifica tu conexion a internet.')
-    }
-    }) 
-    return()=>{
-      unsubscribe();
-    }
-    
-  },[]) */
-    
+  };    
   
   const handleInputChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async () =>{
-    /* const connectionInfo = await NetInfo.fetch()
-    if (!connectionInfo.isConnected) {
-      Alert.alert('Sin conexion ', 'Porfavor, verifica ti conexion a internet')
-      return
-    }
-    console.log(formData) */
     try {
       const baseURL = `http://192.168.88.102:3000/users/validar`;
 
@@ -62,34 +42,15 @@ const Login = () => {
         const { token } = response.data;
         await AsyncStorage.setItem('token', token);
         await AsyncStorage.setItem('user', JSON.stringify(response.data.user[0]));
+        const usuario = JSON.stringify(response.data.user[0])
+        const UserValue = usuario ? JSON.parse(usuario) : null
 
-        /* const storedUser = await AsyncStorage.getItem('user')
-        const user = JSON.parse(storedUser)
-        const userRol= user.tipo_usuario.toLowerCase()
-        const userStatus = user.estado
-        console.log(userStatus);
-        console.log(userRol) */
+        setRol(UserValue.rol)
+        setIdUser(UserValue.id)
+        console.log('Usuario en setRol', setRol);
         
         const tokenAsyng = await AsyncStorage.getItem('token')
 
-
-
-        /* if (userRol == 'catador' && userStatus=='activo') {
-          navigation.navigate("ListarUsuarios");
-          console.log(tokenAsyng)
-          Alert.alert('Bienvenido Catador');
-        }else if (userRol === 'caficultor' && userStatus=='activo'){
-          navigation.navigate("vista1");
-          console.log(tokenAsyng)
-          Alert.alert('Bienvenido Caficultor');
-        }else{
-          if (userRol=='catador'&&userStatus=='inactivo' || userRol=='caficultor'&&userStatus=='inactivo') {
-            Alert.alert("Lo sentimor pero no esta activo en el sistema. ");
-          }else{
-            Alert.alert("Sus datos son erroneos ");
-          }
-
-        } */
     } catch (error) {
       if (error.response && error.response.status === 404) {
         Alert.alert('Usuario no registrado');

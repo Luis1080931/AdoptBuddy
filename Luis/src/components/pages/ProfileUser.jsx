@@ -1,9 +1,9 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Alert, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { IP } from '../services/Ip.jsx'
-import ModalUsuario from '../modals/ModalUser.jsx'
 import axiosClient from '../services/axiosClient.jsx'
+import AuthContext from '../../context/AuthContext.jsx'
 
 const ProfileUser = () => {
 
@@ -15,125 +15,126 @@ const ProfileUser = () => {
         telefono: '',
         municipio: '',
         direccion: '',
+        password: ''
     })
 
     const [user, setUser] = useState([])
-    const [idUser, setIdUser] = useState(null)
+    const { idUser } = useContext(AuthContext)
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const storedUser = await AsyncStorage.getItem('user');
-
-                if (storedUser !== null) {
-                const response = JSON.parse(storedUser);
-                setIdUser(response.id)
-                setFormData(response);
-                console.log('Response', response);
-                }else{
-                    console.log('No hay datos del usuario en almacenamiento local');
-                }
-
-                /* if (storedUser !== null) {
-                    const response = JSON.parse(storedUser);
-                    IdUser = response.id
-                } */
-                    console.log('User async', idUser);
-
                 const response = await axiosClient.get(`${IP}/users/buscar/${idUser}`)
-                if(response.data){
-                    setUser(response.data[0])
-                    console.log('Usuario:' , response.data[0]);
+                if (response.data) {
+                    setFormData(response.data[0])
                 }
-                
             } catch (error) {
                 console.log('Error de fetching de data' + error);
             }
-            console.log('Form data' , formData);
         }
 
         fetchData()
     }, [])
 
-      const handleChange = (name, value) => {
-        setFormData({ ...formData, [name]: value });
-      };
+    const handleChange = (name, value) => {
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
 
-      const handleSubmit = async () => {
+    const handleSubmit = async () => {
         try {
-            await axiosClient.put(`/users/actualizar/${IdUser}`).then((response) => {
-                if(response.status == 200){
-                    console.log('Usuario actualizado');
+            const data = {
+                identificacion: formData.identificacion,
+                nombre: formData.nombre,
+                correo: formData.correo,
+                telefono: formData.telefono,
+                municipio: formData.municipio,
+                direccion: formData.direccion,
+                password: formData.password
+            }
+
+            await axiosClient.put(`/users/actualizar/${idUser}`, data).then((response) => {
+                if (response.status == 200) {
                     Alert.alert('Usuario actualizado con éxito');
-                }else{
+                } else {
                     Alert.alert('Error al actualizar el usuario');
                 }
             })
         } catch (error) {
-            console.log('Error del servidor para actualizar perfil'+ error);
+            console.log('Error del servidor para actualizar perfil' + error);
         }
-      }
-  return (
-    <ScrollView>
-    <View style={styles.container}>
-        <Text style={styles.title}> Perfil de usuario </Text>
-        <View style={styles.cardInfo}>
-            <Image 
-                source={{ uri: `${IP}/users/${formData.imagen_user}` }}
-                style={{ width: 300, height: 300, marginBottom: 20 }}
-            /> 
-            <Text style={[ styles.cardInfo, styles.textDataName]}> {formData.nombre} </Text>
-        </View>
-        <View style={styles.cardInfo}>
-            <View style={styles.cardPlus}>
-                <View style={styles.info}>
-                    <Text style={styles.textInfo}> Identificación: </Text>
-                    <Text style={styles.textInfo}> Correo: </Text>
-                    <Text style={styles.textInfo}> Telefono: </Text>
-                    <Text style={styles.textInfo}> Municipio: </Text>
-                    <Text style={styles.textInfo}> Dirección: </Text>
+    }
 
+    return (
+        <ScrollView>
+            <View style={styles.container}>
+                <Text style={styles.title}> Perfil de usuario </Text>
+                <View style={styles.cardInfo}>
+                    <Image
+                        source={{ uri: `${IP}/users/${formData.imagen_user}` }}
+                        style={{ width: 300, height: 300, marginBottom: 20 }}
+                    />
+                    <Text style={[styles.cardInfo, styles.textDataName]}> {formData.nombre} </Text>
                 </View>
-                <View style={styles.data}>
-                    <TextInput 
-                        style={styles.textData} 
-                        keyboardType='numeric'
-                        value={formData.identificacion.toString()}
-                        onChange={(text) => handleChange('identificacion', text)}
-                    />
-                    <TextInput 
-                        style={styles.textData} 
-                        value={formData.correo}
-                        onChange={(text) => handleChange('correo', text)}    
-                    />
-                    <TextInput 
-                        style={styles.textData}
-                        value={formData.telefono}
-                        onChange={(text) => handleChange('telefono', text)}
-                    /> 
-                    {/* <TextInput 
-                        style={styles.textData} 
-                        value={formData.municipio}
-                        onChange={(text) => handleChange('municipio', text)}
-                    /> */}
-                    <Text style={styles.textData}> {user.municipio} </Text>
-                    <TextInput 
-                        style={styles.textData} 
-                        value={formData.direccion}
-                        onChange={(text) => handleChange('direccion', text)}
-                    />
+                <View style={styles.cardInfo}>
+                    <View style={styles.cardPlus}>
+                        <View style={styles.info}>
+                            <Text style={styles.textInfo}> Identificación: </Text>
+                            <Text style={styles.textInfo}> Correo: </Text>
+                            <Text style={styles.textInfo}> Telefono: </Text>
+                            <Text style={styles.textInfo}> Municipio: </Text>
+                            <Text style={styles.textInfo}> Dirección: </Text>
+                            <Text style={styles.textInfo}> Contraseña: </Text>
 
+                        </View>
+                        <View style={styles.data}>
+                            <TextInput
+                                style={styles.textData}
+                                keyboardType='numeric'
+                                value={formData.identificacion}
+                                onChangeText={(text) => handleChange('identificacion', text)}
+                            />
+                            <TextInput
+                                style={styles.textData}
+                                value={formData.correo}
+                                onChangeText={(text) => handleChange('correo', text)}
+                            />
+                            <TextInput
+                                style={styles.textData}
+                                value={formData.telefono}
+                                onChangeText={(text) => handleChange('telefono', text)}
+                                keyboardType='numeric'
+                            />
+                            {/* <TextInput
+                                style={styles.textData}
+                                value={formData.municipio}
+                                onChangeText={(text) => handleChange('municipio', text)}
+                            /> */}
+                            <Text style={styles.textData}> {formData.municipio} </Text>
+                            <TextInput
+                                style={styles.textData}
+                                value={formData.direccion}
+                                onChangeText={(text) => handleChange('direccion', text)}
+                            />
+                            <TextInput
+                                style={styles.textData}
+                                value={formData.password}
+                                onChangeText={(text) => handleChange('password', text)}
+                                secureTextEntry={true}
+                            />
+                        </View>
+                    </View>
+                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                            <Text style={styles.textButon}> Editar </Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <TouchableOpacity style={styles.button} >
-                    <Text style={styles.textButon} onPress={handleSubmit}> Editar </Text>
-                </TouchableOpacity>
-            </View>
-        </View>
-    </View>
-    </ScrollView>
-  )
+        </ScrollView>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -171,13 +172,14 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 40,
         padding: 10,
         marginBottom: 10,
-        height: 52
+        height: 52,
+        width: 200
     },
     textDataName: {
         fontSize: 20,
         marginBottom: 20
     },
-    cardPlus:{
+    cardPlus: {
         flexDirection: 'row'
     },
     title: {

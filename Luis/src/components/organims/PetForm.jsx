@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axiosClient from '../services/axiosClient';
@@ -6,12 +6,15 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNPickerSelect from 'react-native-picker-select';
 import { IP } from '../services/Ip';
+import AuthContext from '../../context/AuthContext';
 
-const PetForm = ({ closeModal, title, datos, petData, petId }) => {
+const PetForm = ({ onClose, title, datos, petData, petId }) => {
     const navigation = useNavigation();
     const [generos, setGeneros] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [idUser, setIdUser] = useState(null);
+
+    const {setEstadoModal} = useContext(AuthContext)
 
     const [formData, setFormData] = useState({
         nombre: petData ? petData.nombre_mascota : '',
@@ -22,7 +25,7 @@ const PetForm = ({ closeModal, title, datos, petData, petId }) => {
         habitos: petData ? petData.habitos : '',
         edad: petData ? petData.edad.toString() : '',
         image: petData ? petData.imagen : '',
-        imageName: '',  // Agregado para almacenar el nombre del archivo de imagen
+        imageName: '',  
     });
 
     useEffect(() => {
@@ -76,13 +79,25 @@ const PetForm = ({ closeModal, title, datos, petData, petId }) => {
                 console.log('ImagePicker Error: ', response.errorMessage);
             } else {
                 const source = { uri: response.assets[0].uri };
-                const fileName = response.assets[0].fileName;  // Obtener el nombre del archivo original
+                const fileName = response.assets[0].fileName; 
                 setFormData({ ...formData, image: source, imageName: fileName });
             }
         });
     };
 
+    const validateForm = () => {
+        const { nombre, fk_genero, fk_categoria, esteril, vacunas, habitos, edad, image, imageName  } = formData;
+        if (!nombre || !fk_genero || !fk_categoria || !esteril || !vacunas || !habitos || !edad || !image || !imageName) {
+            Alert.alert('Error', 'Todos los campos son obligatorios.');
+            return false;
+        }
+        return true;
+    };
+
     const handleSubmit = async () => {
+
+        if (!validateForm()) return
+
         try {
             const data = new FormData();
             data.append('nombre', formData.nombre);
@@ -112,7 +127,7 @@ const PetForm = ({ closeModal, title, datos, petData, petId }) => {
                 Alert.alert('Mascota registrada correctamente');
                 navigation.navigate('Bienvenido');
                 datos();
-                closeModal();
+                setEstadoModal(false)
             } else {
                 Alert.alert('Error al registrar la mascota');
             }
@@ -122,6 +137,7 @@ const PetForm = ({ closeModal, title, datos, petData, petId }) => {
     };
 
     const handleActualizar = async () => {
+
         try {
             const data = new FormData();
             data.append('nombre', formData.nombre);
@@ -137,7 +153,7 @@ const PetForm = ({ closeModal, title, datos, petData, petId }) => {
                 data.append('image', {
                     uri: formData.image.uri,
                     type: 'image/jpeg',
-                    name: formData.imageName,  // Usar el nombre del archivo original
+                    name: formData.imageName,  
                 });
             }
 
@@ -149,9 +165,9 @@ const PetForm = ({ closeModal, title, datos, petData, petId }) => {
 
             if (response.status === 201) {
                 Alert.alert('Mascota actualizada correctamente');
-                navigation.navigate('Pets');
+                navigation.navigate('Bienvenido');
                 datos();
-                closeModal();
+                setEstadoModal(false)
             } else {
                 Alert.alert('Error al actualizar la mascota');
             }
@@ -181,7 +197,10 @@ const PetForm = ({ closeModal, title, datos, petData, petId }) => {
                 <View style={styles.containerInput}>
                     <Text style={styles.texts}>Género: </Text>
                     <RNPickerSelect 
+                        style={pickerSelectStyles}
                         value={formData.fk_genero}
+                        placeholder={{ label: 'Seleccione el genero', value: null }}
+                        placeholderTextColor="#000"
                         onValueChange={(value) => handleChange('fk_genero', value)}
                         items={generos}
                     />
@@ -189,7 +208,10 @@ const PetForm = ({ closeModal, title, datos, petData, petId }) => {
                 <View style={styles.containerInput}>
                     <Text style={styles.texts}>Categoría: </Text>
                     <RNPickerSelect 
+                        style={pickerSelectStyles}
                         value={formData.fk_categoria}
+                        placeholder={{ label: 'Seleccione la categoria', value: null }}
+                        placeholderTextColor="#000"
                         onValueChange={(value) => handleChange('fk_categoria', value)}
                         items={categorias}
                     />
@@ -197,7 +219,10 @@ const PetForm = ({ closeModal, title, datos, petData, petId }) => {
                 <View style={styles.containerInput}>
                     <Text style={styles.texts}>Esterilidad: </Text>
                     <RNPickerSelect 
+                        style={pickerSelectStyles}
                         value={formData.esteril}
+                        placeholder={{ label: 'Seleccione la esterilidad', value: null }}
+                        placeholderTextColor="#000"
                         onValueChange={(value) => handleChange('esteril', value)}
                         items={[
                             { label: 'Sí', value: '1' },
@@ -297,6 +322,25 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         marginTop: 10
     }
+});
+
+const pickerSelectStyles = StyleSheet.create({
+    inputIOS: {
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 12,
+        fontSize: 16,
+        color: '#000',
+    },
+    inputAndroid: {
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
+        color: 'black',
+        backgroundColor:"#F3F3F3"
+    },
 });
 
 export default PetForm;

@@ -32,6 +32,7 @@ const Routes = () => {
     <>
       <SideBar visible={visible} onClose={() => setVisible(false)} />
       <Stack.Navigator>
+        <Stack.Screen name='AdoptBuddy' component={MainPage} options={{ headerShown: false }} />
         <Stack.Screen 
           name='Bienvenido'
           component={TabNavigation}
@@ -40,11 +41,11 @@ const Routes = () => {
               <TouchableOpacity onPress={handleMenuPress}>
                 <IconMenu />
               </TouchableOpacity>
-            )
+            ),
+            headerStyle: { backgroundColor: 'rgb(255, 165, 0)' }
           }}
         />
         <Stack.Screen name='Home' component={Home} options={{ headerShown: false }} />
-        <Stack.Screen name='AdoptBuddy' component={MainPage} options={{ headerShown: false }} />
         <Stack.Screen name='Login' component={Login} />
         <Stack.Screen name='Register' component={UserForm} />
         <Stack.Screen name='Profile' component={ProfileUser} options={{ headerStyle: { backgroundColor: 'rgb(255, 165, 0)' } }} />

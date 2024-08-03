@@ -1,15 +1,11 @@
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native'
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import axiosClient from '../services/axiosClient'
 import { IP } from '../services/Ip'
 import axios from 'axios'
 import IconVer from '../atoms/IconVer'
-import IconDelete from '../atoms/IconDelete'
-import { useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import IconEdit from '../atoms/IconEdit'
-import IconPlus from '../atoms/IconPlus'
-import ModalPet from '../modals/ModalPets'
+import { useNavigation } from '@react-navigation/native'
 
 const HistorialPets = () => {
 
@@ -18,30 +14,24 @@ const HistorialPets = () => {
   const [petData, setPetData] = useState(null)
   const [petId, setPetId] = useState(null)
 
-  
   const getMascotas = async () => {
     try {
       const response = await axios.get(`${IP}/mascotas/listarHistorial`)
-     /*  console.log('Mascotas listadas', response.data) */
       setMascotas(response.data)
-      
     } catch (error) {
       console.log('Error del servidor para listar mascotas' + error);
     }
   }
 
   useEffect(() => {
-
     const fetchUser = async () => {
       const userValue = await AsyncStorage.getItem('user')
-      if(userValue !== null){
+      if (userValue !== null) {
         const response = JSON.parse(userValue)
-        rolUser = response.rol
-        idUser = response.id
+        // Assuming rolUser and idUser are used somewhere else
+        // const rolUser = response.rol
+        // const idUser = response.id
       }
-      console.log('User async', rolUser);
-      console.log('User async id', idUser);
-
     }
     fetchUser()
   }, [])
@@ -50,70 +40,46 @@ const HistorialPets = () => {
     getMascotas()
   }, [])
 
-  const vista = (accion, petData, petId) => {
-    setTitle(accion)
-    setModalOpen(!modalOpen)
-    setPetData(petData)
-    setPetId(petId)
-  }
-
   const handleVer = async (id) => {
     navigation.navigate('Pet', { petId: id })
   }
 
-  const deletePet = async (id) => {
-    try {
-      await axiosClient.delete(`/mascotas/eliminar/${id}`).then((response) => {
-        if(response.status === 200){
-          console.log('Mascota eliminada')
-          getMascotas()
-          Alert.alert('Mascota eliminada con éxito')
-        }else{
-          Alert.alert('Error al eliminar la mascota')
-        }
-      })
-    } catch (error) {
-      console.log('Error al eliminar mascota' + error);
-    }
-  }
-
   return (
-    <>
-      <ScrollView>
-        <View >
-          <Text style={styles.title}> Historial de mascotas </Text>
-          <FlatList 
-            data={mascotas}
-            keyExtractor={item => item.id_mascota}
-            renderItem={({ item }) => (
-              <View style={styles.card}>
-                <View style={{ flexDirection: 'row', alignItems: 'center'  }}>
-                  <Image 
-                    source={{ uri: `${IP}/img/${item.imagen}` }}
-                    style={styles.mascotaImage}
-                  />
-                  <View>
-                    <Text style={styles.texto}> {item.nombre_mascota} </Text>
-                    <Text style={styles.texto}> {item.estado} </Text>
-                  </View>
-                </View>
-                <View style={styles.mascotaDescription}>
-                  <TouchableOpacity onPress={() => handleVer(item.id_mascota)}>
-                    <IconVer />
-                  </TouchableOpacity>
-                </View>
+    <View style={styles.container}>
+      <Text style={styles.title}> Historial de mascotas </Text>
+      <FlatList 
+        data={mascotas}
+        keyExtractor={item => item.id_mascota.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Image 
+                source={{ uri: `${IP}/img/${item.imagen}` }}
+                style={styles.mascotaImage}
+              />
+              <View>
+                <Text style={styles.texto}> {item.nombre_mascota} </Text>
+                <Text style={styles.texto}> {item.estado} </Text>
               </View>
-            )}
-          />
-        </View>
-      </ScrollView>
-    </>
+            </View>
+            <View style={styles.mascotaDescription}>
+              <TouchableOpacity onPress={() => handleVer(item.id_mascota)}>
+                <IconVer />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+      />
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  card: {
+  container: {
     flex: 1,
+    backgroundColor: '#F5FCFF',
+  },
+  card: {
     backgroundColor: '#fff',
     alignItems: 'center',
     flexDirection: 'row',
@@ -131,47 +97,22 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginLeft: 80
   },
-  mascota: {
-    width: 200,
-    height: 200,
-    resizeMode: 'contain',
-    marginBottom: 10,
-  },
-  texto: {
-    fontSize: 25,
-    fontWeight: '700',
-    color: 'black'
-  },
-  mascotaName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  mascotaDescription: {
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: 10
-  },
   mascotaImage: {
     width: 80,
     height: 80,
     borderRadius: 50,
     margin: 10
   },
-  addButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: 'rgb(255, 165, 0)',
-    borderRadius: 50,
-    height: 50,
-    width: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
+  texto: {
+    fontSize: 25,
+    fontWeight: '700',
+    color: 'black'
   },
-  addImage: {
-    width: 50,
-    height: 50,
+  mascotaDescription: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 10
   },
   title: {
     fontSize: 30,
@@ -180,11 +121,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginLeft: 10,
     color: 'black',
-    justifyContent: 'center',
-    alignItems: 'center',
     textAlign: 'center'
   }
 })
-
 
 export default HistorialPets

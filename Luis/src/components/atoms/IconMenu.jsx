@@ -6,7 +6,7 @@ const IconMenu = () => {
     <View>
       <Image
         source={require('./../../../assets/iconMenu.png')}
-        style={{ width: 30, height: 30 }}
+        style={{ width: 30, height: 30, marginRight: 10 }}
       />
     </View>
   )

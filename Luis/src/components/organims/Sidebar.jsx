@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Modal, View, StyleSheet, Animated, TouchableWithoutFeedback, Text, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AuthContext from '../../context/AuthContext';
 
 const SideBar = ({ visible, onClose }) => {
   const [slideAnim] = useState(new Animated.Value(-300));
   const [selectedButton, setSelectedButton] = useState('');
   const [rolUser, setRolUser] = useState(null);
   const navigation = useNavigation();
+
+  const { rol } = useContext(AuthContext)
+  console.log('Rol de usuario en contexto', rol);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -88,19 +92,23 @@ const SideBar = ({ visible, onClose }) => {
                 /> */}
               </View>
               <View style={styles.divider} />
-              <TouchableOpacity
-                style={buttonStyle('PetsAdopt')}
-                onPress={() => handlePress('MisAdopts')}
-              >
-                <Text style={textStyle('PetsAdopt')}>Mis adopciones</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={buttonStyle('MisSoli')}
-                onPress={() => handlePress('MisSoli')}
-              >
-                <Text style={textStyle('MisSoli')}>Mis solicitudes</Text>
-              </TouchableOpacity>
-              {rolUser === 'admin' && (
+              {rol === 'usuario' && (
+                <>
+                  <TouchableOpacity
+                    style={buttonStyle('PetsAdopt')}
+                    onPress={() => handlePress('MisAdopts')}
+                  >
+                    <Text style={textStyle('PetsAdopt')}>Mis adopciones</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={buttonStyle('MisSoli')}
+                    onPress={() => handlePress('MisSoli')}
+                  >
+                    <Text style={textStyle('MisSoli')}>Mis solicitudes</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+              {rol === 'admin' && (
                 <>
                   <TouchableOpacity
                     style={buttonStyle('Solicitudes')}

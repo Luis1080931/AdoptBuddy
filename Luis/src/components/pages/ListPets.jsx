@@ -1,5 +1,5 @@
-import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
 import axiosClient from '../services/axiosClient'
 import { IP } from '../services/Ip'
 import axios from 'axios'
@@ -10,51 +10,46 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import IconEdit from '../atoms/IconEdit'
 import IconPlus from '../atoms/IconPlus'
 import ModalPet from '../modals/ModalPets'
+import AuthContext from '../../context/AuthContext'
 
 const ListPets = () => {
-
   const [mascotas, setMascotas] = useState([])
   const navigation = useNavigation()
-  const [modalOpen, setModalOpen] = useState(false)
   const [petData, setPetData] = useState(null)
   const [petId, setPetId] = useState(null)
   const [title, setTitle] = useState('')
+  const { rol, estadoModal, setEstadoModal } = useContext(AuthContext)
 
-  
   const getMascotas = async () => {
     try {
       const response = await axios.get(`${IP}/mascotas/listar`)
-      /* console.log('Mascotas listadas', response.data) */
       setMascotas(response.data)
-      
     } catch (error) {
-      console.log('Error del servidor para listar mascotas' + error);
+      console.log('Error del servidor para listar mascotas' + error)
     }
   }
 
   useEffect(() => {
-
     const fetchUser = async () => {
       const userValue = await AsyncStorage.getItem('user')
-      if(userValue !== null){
+      if (userValue !== null) {
         const response = JSON.parse(userValue)
         rolUser = response.rol
         idUser = response.id
       }
-      console.log('User async', rolUser);
-      console.log('User async id', idUser);
-
+      console.log('User async', rolUser)
+      console.log('User async id', idUser)
     }
     fetchUser()
   }, [])
-  
+
   useEffect(() => {
     getMascotas()
   }, [])
 
   const vista = (accion, petData, petId) => {
     setTitle(accion)
-    setModalOpen(!modalOpen)
+    setEstadoModal(!estadoModal)
     setPetData(petData)
     setPetId(petId)
   }
@@ -66,69 +61,71 @@ const ListPets = () => {
   const deletePet = async (id) => {
     try {
       await axiosClient.delete(`/mascotas/eliminar/${id}`).then((response) => {
-        if(response.status === 200){
+        if (response.status === 200) {
           console.log('Mascota eliminada')
           getMascotas()
           Alert.alert('Mascota eliminada con éxito')
-        }else{
+        } else {
           Alert.alert('Error al eliminar la mascota')
         }
       })
     } catch (error) {
-      console.log('Error al eliminar mascota' + error);
+      console.log('Error al eliminar mascota' + error)
     }
   }
 
   return (
     <>
-      <ScrollView>
-        <View >
-          <Text style={styles.title}> Mascotas disponibles </Text>
-          <FlatList 
-            data={mascotas}
-            keyExtractor={item => item.id_mascota}
-            renderItem={({ item }) => (
-              <View style={styles.card}>
-                <View style={{ flexDirection: 'row', alignItems: 'center'  }}>
-                  <Image 
-                    source={{ uri: `${IP}/img/${item.imagen}` }}
-                    style={styles.mascotaImage}
-                  />
-                  <Text style={styles.texto}> {item.nombre_mascota} </Text>
-                </View>
-                <View style={styles.mascotaDescription}>
-                  <TouchableOpacity onPress={() => handleVer(item.id_mascota)}>
-                    <IconVer />
+      <FlatList
+        data={mascotas}
+        keyExtractor={item => item.id_mascota}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Image
+                source={{ uri: `${IP}/img/${item.imagen}` }}
+                style={styles.mascotaImage}
+              />
+              <Text style={styles.texto}>{item.nombre_mascota}</Text>
+            </View>
+            <View style={styles.mascotaDescription}>
+              <TouchableOpacity onPress={() => handleVer(item.id_mascota)}>
+                <IconVer />
+              </TouchableOpacity>
+              {rol && rol === 'admin' ? (
+                <>
+                  <TouchableOpacity onPress={() => vista('Actualizar', item, item.id_mascota)}>
+                    <IconEdit />
                   </TouchableOpacity>
-                  {rolUser && rolUser === 'admin' ? (
-                    <>
-                      <TouchableOpacity onPress={() => vista('Actualizar', item, item.id_mascota)}>
-                        <IconEdit />
-                      </TouchableOpacity>
-                      <TouchableOpacity onPress={() => deletePet(item.id_mascota)}>
-                        <IconDelete />
-                      </TouchableOpacity>
-                    </>
-                  ): ''}
-                </View>
-              </View>
-            )}
-          />
-        </View>
-      </ScrollView>
-      <View style={styles.addButton}>
+                  <TouchableOpacity onPress={() => deletePet(item.id_mascota)}>
+                    <IconDelete />
+                  </TouchableOpacity>
+                </>
+              ) : null}
+            </View>
+          </View>
+        )}
+        ListHeaderComponent={() => (
+          <View>
+            <Text style={styles.title}>Mascotas disponibles</Text>
+          </View>
+        )}
+      />
+      {rol === 'admin' && (
+        <View style={styles.addButton}>
           <TouchableOpacity onPress={() => vista('Registrar')}>
             <IconPlus style={styles.iconMas} />
           </TouchableOpacity>
         </View>
-        <ModalPet 
-          visible={modalOpen}
-          onClose={() => setModalOpen(false)}
-          title={title}
-          datos={getMascotas()}
-          petData={petData}
-          petId={petId}
-        />
+      )}
+      <ModalPet
+        visible={estadoModal}
+        onClose={vista}
+        title={title}
+        datos={getMascotas}
+        petData={petData}
+        petId={petId}
+      />
     </>
   )
 }
@@ -207,6 +204,5 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   }
 })
-
 
 export default ListPets

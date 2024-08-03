@@ -1,10 +1,11 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import axios from 'axios'
 import axiosClient from '../services/axiosClient'
 import { IP } from '../services/Ip'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import AuthContext from '../../context/AuthContext'
 
 const PagePetDetaills = () => {
 
@@ -12,6 +13,7 @@ const PagePetDetaills = () => {
     const { petId } = route.params
     const [mascota, setMascota] = useState(null)
     const navigation = useNavigation()
+    const {rol} = useContext(AuthContext)
 
     const datosMascota = async () => {
         try {
@@ -114,13 +116,15 @@ const PagePetDetaills = () => {
                     <Text style={styles.textInfo}> Estado actual: {mascota.estado}</Text>
                     <Text style={styles.textInfo}> Fecha registro: {mascota.fecha}</Text>
                 </View>
-                <View>
-                    {mascota.estado === 'sin adoptar' ? (
-                        <TouchableOpacity style={styles.button} onPress={handleAdoptar}>
-                            <Text style={styles.textButon}> Adoptar </Text>
-                        </TouchableOpacity>
-                    ): ''}
-                </View>
+                {rol === 'usuario' && (
+                    <View>
+                        {mascota.estado === 'sin adoptar' ? (
+                            <TouchableOpacity style={styles.button} onPress={handleAdoptar}>
+                                <Text style={styles.textButon}> Adoptar </Text>
+                            </TouchableOpacity>
+                        ): ''}
+                    </View>
+                )}
             </View>
         ) : (
             <Text> Sin detalles </Text>

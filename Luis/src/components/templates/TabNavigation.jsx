@@ -14,18 +14,6 @@ const TabNavigation = () => {
   return (
     <>
       <Tab.Navigator>
-        {/* <Tab.Screen
-          name="Menu"
-          component={() => null} 
-          options={{
-            headerShown: false,
-            tabBarIcon: ({ color, size }) => (
-              <TouchableOpacity onPress={handleMenuPress}>
-                <IconMenu color={color} size={size} />
-              </TouchableOpacity>
-            ),
-          }}
-        /> */}
         <Tab.Screen
           name="Pets"
           component={ListPets}
