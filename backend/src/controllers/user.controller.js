@@ -20,7 +20,7 @@ export const registrarUser = async (req, res) => {
         let image = req.file.originalname
         const { identificacion, nombre, correo, telefono, municipio, direccion, password } = req.body;
 
-        let sql = 'INSERT INTO usuarios (identificacion, nombre, imagen_user, correo, telefono, municipio, direccion, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+        let sql = 'INSERT INTO usuarios (identificacion, nombre, imagen_user, correo, telefono, municipio, direccion, password, rol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 2)'
 
         const [rows] = await pool.query(sql, [identificacion, nombre, image, correo, telefono, municipio, direccion, password])
 
@@ -122,7 +122,8 @@ export const buscarUsusario = async (req, res) => {
                 correo,
                 telefono,
                 nombre_municipio AS municipio,
-                direccion 
+                direccion, 
+                password
 
                 FROM usuarios
 
