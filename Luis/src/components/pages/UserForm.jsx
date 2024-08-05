@@ -82,7 +82,7 @@ const UserForm = ({ closeModal, title, datos, userData, userId }) => {
                 data.append('image', {
                     uri: formData.image.uri,
                     type: 'image/jpeg',
-                    name: formData.imageName,  // Usar el nombre del archivo original
+                    name: formData.imageName, 
                 });
             }
             

@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   buttonAcept: {
-    backgroundColor: '#336699',
+    backgroundColor: 'rgb(255, 165, 0)',
     padding: 10,
     borderRadius: 5,
     width: 130,

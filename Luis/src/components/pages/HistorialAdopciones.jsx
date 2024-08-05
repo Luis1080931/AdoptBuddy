@@ -22,9 +22,6 @@ const HistorialAdopciones = () => {
       const userValue = await AsyncStorage.getItem('user')
       if (userValue !== null) {
         const response = JSON.parse(userValue)
-        // Assuming rolUser and idUser are used somewhere else
-        // const rolUser = response.rol
-        // const idUser = response.id
       }
     }
     fetchUser()
