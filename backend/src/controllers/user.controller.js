@@ -1,5 +1,6 @@
 import { pool } from "../database/conexion.js";
 import multer from 'multer'
+import bcrypt from 'bcrypt'
 
 const storage = multer.diskStorage(
     {
@@ -19,10 +20,11 @@ export const registrarUser = async (req, res) => {
     try {
         let image = req.file.originalname
         const { identificacion, nombre, correo, telefono, municipio, direccion, password } = req.body;
+        const bcryptPassword = bcrypt.hashSync(password, 12)
 
         let sql = 'INSERT INTO usuarios (identificacion, nombre, imagen_user, correo, telefono, municipio, direccion, password, rol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 2)'
 
-        const [rows] = await pool.query(sql, [identificacion, nombre, image, correo, telefono, municipio, direccion, password])
+        const [rows] = await pool.query(sql, [identificacion, nombre, image, correo, telefono, municipio, direccion, bcryptPassword])
 
         if(rows.affectedRows>0){
             res.status(201).json({ message: 'Usuario registrado correctamente' });
