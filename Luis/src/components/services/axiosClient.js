@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { IP } from "./Ip.jsx";
+import { IP } from "./Ip.js";
 
 const axiosClient = axios.create({
   baseURL: `${IP}`

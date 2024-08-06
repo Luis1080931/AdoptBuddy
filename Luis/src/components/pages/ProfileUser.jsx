@@ -1,8 +1,8 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, Alert, ScrollView } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { IP } from '../services/Ip.jsx'
-import axiosClient from '../services/axiosClient.jsx'
+import { IP } from '../services/Ip.js'
+import axiosClient from '../services/axiosClient.js'
 import AuthContext from '../../context/AuthContext.jsx'
 import RNPickerSelect from 'react-native-picker-select';
 
