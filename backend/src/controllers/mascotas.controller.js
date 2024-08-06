@@ -40,7 +40,7 @@ export const registrarMascota = async (req, res) => {
 export const actualizarMascota = async (req, res) => {
     try {
         
-        const {nombre, genero, categoria, esteril, vacunas, habitos, edad, estado} = req.body
+        const {nombre, fk_genero, fk_categoria, esteril, vacunas, habitos, edad, estado} = req.body
         let image = req.file ? req.file.originalname : null;
         const {id} = req.params
         const [anterior] = await pool.query(`SELECT * FROM mascotas WHERE id_mascota = ?`, [id])
@@ -57,7 +57,7 @@ export const actualizarMascota = async (req, res) => {
             estado = ? 
         `
 
-        const params =  [nombre || anterior[0].nombre, genero || anterior[0].fk_genero, categoria || anterior[0].fk_categoria, esteril || anterior[0].esteril, vacunas || anterior[0].vacunas, habitos || anterior[0].habitos, edad || anterior[0].edad, estado || anterior[0].estado]
+        const params =  [nombre || anterior[0].nombre, fk_genero || anterior[0].fk_genero, fk_categoria || anterior[0].fk_categoria, esteril || anterior[0].esteril, vacunas || anterior[0].vacunas, habitos || anterior[0].habitos, edad || anterior[0].edad, estado || anterior[0].estado]
 
         if (image) {
             sql += `, image = ?`;

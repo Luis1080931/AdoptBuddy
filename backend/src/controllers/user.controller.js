@@ -121,7 +121,8 @@ export const buscarUsusario = async (req, res) => {
                 imagen_user,
                 correo,
                 telefono,
-                nombre_municipio AS municipio,
+                nombre_municipio,
+                id_municipio AS municipio,
                 direccion, 
                 password
 
