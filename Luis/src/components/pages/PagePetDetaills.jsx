@@ -79,7 +79,7 @@ const PagePetDetaills = () => {
                     Alert.alert('Tu solicitud de adopción entró en proceso')
                     handleEstadoMascota()
                     datosMascota()
-                    navigation.navigate('MisSoli')
+                    navigation.navigate('Pets')
                 }else{
                     Alert.alert('Vaya ocurrió un error en el proceso')
                 }

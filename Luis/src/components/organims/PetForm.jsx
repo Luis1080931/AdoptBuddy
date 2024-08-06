@@ -168,6 +168,8 @@ const PetForm = ({ onClose, title, datos, petData, petId }) => {
                 navigation.navigate('Bienvenido');
                 datos();
                 setEstadoModal(false)
+                console.log('Datos actualizados', data);
+                
             } else {
                 Alert.alert('Error al actualizar la mascota');
             }
@@ -217,7 +219,7 @@ const PetForm = ({ onClose, title, datos, petData, petId }) => {
                     />
                 </View>
                 <View style={styles.containerInput}>
-                    <Text style={styles.texts}>Esterilidad: </Text>
+                    <Text style={styles.texts}>Esterilización: </Text>
                     <RNPickerSelect 
                         style={pickerSelectStyles}
                         value={formData.esteril}

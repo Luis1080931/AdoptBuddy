@@ -46,10 +46,14 @@ const HistorialPets = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}> Historial de mascotas </Text>
       <FlatList 
         data={mascotas}
         keyExtractor={item => item.id_mascota.toString()}
+        ListHeaderComponent={() => (
+          <View>
+            <Text style={styles.title}> Historial de mascotas </Text>
+          </View>
+        )}
         renderItem={({ item }) => (
           <View style={styles.card}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -67,6 +71,11 @@ const HistorialPets = () => {
                 <IconVer />
               </TouchableOpacity>
             </View>
+          </View>
+        )}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No hay mascotas disponibles</Text>
           </View>
         )}
       />
@@ -122,6 +131,15 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     color: 'black',
     textAlign: 'center'
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20
+  },
+  emptyText: {
+    fontSize: 20,
+    color: 'gray'
   }
 })
 

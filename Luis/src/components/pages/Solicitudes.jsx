@@ -72,6 +72,7 @@ const Solicitudes = () => {
           Alert.alert('Solicitud aceptada con éxito')
           handleAdoptMascota(idPet)
           getSolicitudes()
+          navigation.navigate('HistorialAdopciones')
         } else {
           Alert.alert('Error al aceptar la solicitud')
         }

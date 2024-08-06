@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { IP } from '../services/Ip.jsx'
 import axiosClient from '../services/axiosClient.jsx'
 import AuthContext from '../../context/AuthContext.jsx'
+import RNPickerSelect from 'react-native-picker-select';
 
 const ProfileUser = () => {
 
@@ -18,8 +19,21 @@ const ProfileUser = () => {
         password: ''
     })
 
+    const [municipios, setMunicipios] = useState([])
     const [user, setUser] = useState([])
     const { idUser } = useContext(AuthContext)
+
+    useEffect(() => {
+        axiosClient.get('/users/muni').then((response) => {
+            console.log(response.data);
+            setMunicipios(response.data.map(item => 
+            ({
+                label: item.nombre_municipio,
+                value: item.id_municipio
+            })));
+            
+        });
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -27,6 +41,8 @@ const ProfileUser = () => {
                 const response = await axiosClient.get(`${IP}/users/buscar/${idUser}`)
                 if (response.data) {
                     setFormData(response.data[0])
+                    console.log('Datos user', response.data[0]);
+                    
                 }
             } catch (error) {
                 console.log('Error de fetching de data' + error);
@@ -58,10 +74,12 @@ const ProfileUser = () => {
             await axiosClient.put(`/users/actualizar/${idUser}`, data).then((response) => {
                 if (response.status == 200) {
                     Alert.alert('Usuario actualizado con éxito');
+                    
                 } else {
                     Alert.alert('Error al actualizar el usuario');
                 }
             })
+            console.log('Datos a actualizar', data);
         } catch (error) {
             console.log('Error del servidor para actualizar perfil' + error);
         }
@@ -112,7 +130,15 @@ const ProfileUser = () => {
                                 value={formData.municipio}
                                 onChangeText={(text) => handleChange('municipio', text)}
                             /> */}
-                            <Text style={styles.textData}> {formData.municipio} </Text>
+                            {/* <Text style={styles.textData}> {formData.municipio} </Text> */}
+                            <RNPickerSelect 
+                                style={pickerSelectStyles}
+                                value={formData.municipio}
+                                placeholder={{ label: 'Seleccione el municipio', value: null }}
+                                placeholderTextColor="#000"
+                                onValueChange={(value) => handleChange('municipio', value)}
+                                items={municipios}
+                            />
                             <TextInput
                                 style={styles.textData}
                                 value={formData.direccion}
@@ -201,7 +227,33 @@ const styles = StyleSheet.create({
         color: 'black',
         fontSize: 20,
         fontWeight: '700'
+    },
+    data: {
+        width: 200
     }
 })
+
+const pickerSelectStyles = StyleSheet.create({
+    inputIOS: {
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 12,
+        fontSize: 16,
+        color: '#000',
+        height: 52,
+        marginBottom: 5
+    },
+    inputAndroid: {
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 5,
+        color: 'black',
+        backgroundColor:"#F3F3F3",
+        height: 52,
+        marginBottom: 10
+    },
+});
 
 export default ProfileUser

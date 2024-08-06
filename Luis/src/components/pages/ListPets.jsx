@@ -79,6 +79,11 @@ const ListPets = () => {
       <FlatList
         data={mascotas}
         keyExtractor={item => item.id_mascota}
+        ListHeaderComponent={() => (
+          <View>
+            <Text style={styles.title}>Mascotas disponibles</Text>
+          </View>
+        )}
         renderItem={({ item }) => (
           <View style={styles.card}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -105,11 +110,12 @@ const ListPets = () => {
             </View>
           </View>
         )}
-        ListHeaderComponent={() => (
-          <View>
-            <Text style={styles.title}>Mascotas disponibles</Text>
+        ListEmptyComponent={() => (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No hay mascotas disponibles</Text>
           </View>
         )}
+        
       />
       {rol === 'admin' && (
         <View style={styles.addButton}>
@@ -202,6 +208,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center'
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20
+  },
+  emptyText: {
+    fontSize: 20,
+    color: 'gray'
   }
 })
 
