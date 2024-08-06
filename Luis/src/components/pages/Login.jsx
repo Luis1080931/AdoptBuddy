@@ -26,7 +26,7 @@ const Login = () => {
 
   const handleSubmit = async () =>{
     try {
-      const baseURL = `http://10.193.145.69:3000/users/validar`;
+      const baseURL = `http://192.168.88.102:3000/users/validar`;
 
       const response = await axios.post(baseURL, formData)
       
